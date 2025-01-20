@@ -17,5 +17,10 @@ public class UserService {
 	public User addUser(User user) {
 		return userRepo.save(user);
 	}
+
+	public User loginUser(User user) {
+		// TODO 
+		return null;
+	}
 	
 }

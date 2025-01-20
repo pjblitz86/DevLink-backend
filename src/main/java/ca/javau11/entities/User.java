@@ -3,6 +3,8 @@ package ca.javau11.entities;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -17,6 +19,8 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 
 @Entity
 public class User {
@@ -29,12 +33,21 @@ public class User {
 	@JsonBackReference
 	private Profile profile;
 	
+	@NotEmpty(message = "Name is required")
 	private String name;
+	
+	@NotEmpty(message = "Email is required")
 	private String email;
+	
+	@NotEmpty(message = "Password is required")
+	@Size(min = 6, message = "Password must be at least 6 characters")
 	private String password;
+	
+	// TODO
 	private String avatar;
 	
-	@Column(columnDefinition = "TIMESTAMP")
+	@CreationTimestamp
+	@Column(columnDefinition = "TIMESTAMP", updatable = false)
 	private LocalDateTime date;
 	
 	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "user")
