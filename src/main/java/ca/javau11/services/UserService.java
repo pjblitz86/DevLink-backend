@@ -11,32 +11,40 @@ import ca.javau11.exceptions.AuthenticationException;
 import ca.javau11.exceptions.DuplicateEmailException;
 import ca.javau11.exceptions.UserNotFoundException;
 import ca.javau11.repositories.UserRepository;
+import ca.javau11.utils.JwtUtils;
+import ca.javau11.utils.Response;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepo;
     private final PasswordEncoder passwordEncoder;
-
-    public UserService(UserRepository userRepo) {
+    
+    public UserService(UserRepository userRepo, 
+    				   PasswordEncoder passwordEncoder,
+    				   JwtUtils jwtUtils) {
         this.userRepo = userRepo;
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
-    public User addUser(User user) {
-    	user.setAvatar(user.getAvatar());
-    	if (userRepo.findByEmail(user.getEmail()) != null) {
-    		throw new DuplicateEmailException("Email is already in use");
+    public Response<User> addUser(User user) {
+        if (userRepo.findByEmail(user.getEmail()) != null) {
+            throw new DuplicateEmailException("Email is already in use");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepo.save(user);
+        user.setAvatar(user.getAvatar());
+        User savedUser = userRepo.save(user);
+        String jwtToken = JwtUtils.generateToken(savedUser);
+        return new Response<>("User registered successfully", savedUser, jwtToken);
     }
 
-    public User loginUser(User user) {
+    public Response<User> loginUser(User user) {
         User existingUser = userRepo.findByEmail(user.getEmail());
         if (existingUser != null && passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
-            return existingUser;
+            String jwtToken = JwtUtils.generateToken(existingUser);
+            return new Response<>("Login successful", existingUser, jwtToken);
         }
+        
         throw new AuthenticationException("Invalid email or password");
     }
 

@@ -1,5 +1,7 @@
 package ca.javau11.controllers;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ca.javau11.entities.User;
 import ca.javau11.services.UserService;
+import ca.javau11.utils.Response;
 
 @CrossOrigin
 @RestController
@@ -21,14 +24,16 @@ public class UserController {
 	}
 	
 	@PostMapping("/register")
-	public User createUser(@RequestBody User user) {
-		return userService.addUser(user);
-	}
-	
-	@PostMapping("/login")
-	public User loginUser(@RequestBody User user) {
-		return userService.loginUser(user);
-	}
+    public ResponseEntity<Response<User>> createUser(@RequestBody User user) {
+        Response<User> response = userService.addUser(user);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<Response<User>> loginUser(@RequestBody User user) {
+        Response<User> response = userService.loginUser(user);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 	
 	@GetMapping("/user/{id}")
     public User getUser(@PathVariable Long id) {
