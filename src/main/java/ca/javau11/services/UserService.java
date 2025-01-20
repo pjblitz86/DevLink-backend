@@ -24,6 +24,7 @@ public class UserService {
     }
 
     public User addUser(User user) {
+    	user.setAvatar(user.getAvatar());
     	if (userRepo.findByEmail(user.getEmail()) != null) {
     		throw new DuplicateEmailException("Email is already in use");
         }

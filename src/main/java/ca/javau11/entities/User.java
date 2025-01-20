@@ -48,7 +48,7 @@ public class User {
 	@Size(min = 6, message = "Password must be at least 6 characters")
 	private String password;
 	
-	// TODO
+	@Column(nullable = true)
 	private String avatar;
 	
 	@CreationTimestamp
@@ -107,7 +107,7 @@ public class User {
 	}
 
 	public String getAvatar() {
-        return GravatarUtils.getGravatarUrl(this.email, 200);  
+		return avatar != null ? avatar : GravatarUtils.getGravatarUrl(this.email, 200);  
     }
 
 	public void setAvatar(String avatar) {

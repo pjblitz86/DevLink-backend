@@ -5,10 +5,13 @@ import java.security.NoSuchAlgorithmException;
 
 public class GravatarUtils {
 
+	private static final String DEFAULT_GRAVATAR_URL = "https://www.gravatar.com/avatar/00000000000000000000000000000000?s=80&d=mp";
+	
     public static String getGravatarUrl(String email, int size) {
         String cleanEmail = email.trim().toLowerCase();
         String emailHash = md5Hex(cleanEmail);
-        return "https://www.gravatar.com/avatar/" + emailHash + "?s=" + size;
+        String gravatarUrl = "https://www.gravatar.com/avatar/" + emailHash + "?s=" + size;
+        return gravatarUrl + "&d=" + DEFAULT_GRAVATAR_URL;
     }
 
     private static String md5Hex(String input) {
