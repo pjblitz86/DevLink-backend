@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -36,9 +37,11 @@ public class User {
 	@NotEmpty(message = "Name is required")
 	private String name;
 	
+	@Column(unique = true, nullable = false)
 	@NotEmpty(message = "Email is required")
 	private String email;
 	
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	@NotEmpty(message = "Password is required")
 	@Size(min = 6, message = "Password must be at least 6 characters")
 	private String password;
