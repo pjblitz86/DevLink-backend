@@ -1,6 +1,8 @@
 package ca.javau11.controllers;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,5 +29,10 @@ public class UserController {
 	public User loginUser(@RequestBody User user) {
 		return userService.loginUser(user);
 	}
+	
+	@GetMapping("/user/{id}")
+    public User getUser(@PathVariable Long id) {
+        return userService.getUserById(id);
+    }
 	
 }

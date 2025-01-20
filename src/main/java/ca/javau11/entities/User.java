@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import ca.javau11.utils.GravatarUtils;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,6 +21,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
@@ -37,7 +39,7 @@ public class User {
 	@NotEmpty(message = "Name is required")
 	private String name;
 	
-	@Column(unique = true, nullable = false)
+	@Email(message = "Invalid email format")
 	@NotEmpty(message = "Email is required")
 	private String email;
 	
@@ -105,8 +107,8 @@ public class User {
 	}
 
 	public String getAvatar() {
-		return avatar;
-	}
+        return GravatarUtils.getGravatarUrl(this.email, 200);  
+    }
 
 	public void setAvatar(String avatar) {
 		this.avatar = avatar;
