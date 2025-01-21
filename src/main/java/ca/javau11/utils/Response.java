@@ -5,14 +5,18 @@ public class Response<T> {
     private T data;
     private String token;
 
-    // Constructor
     public Response(String message, T data, String token) {
         this.message = message;
         this.data = data;
         this.token = token;
     }
 
-    // Getters and setters
+    public Response(String message) {
+        this.message = message;
+        this.data = null;
+        this.token = null;
+    }
+
     public String getMessage() {
         return message;
     }

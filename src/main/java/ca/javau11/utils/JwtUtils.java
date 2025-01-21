@@ -4,14 +4,9 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.Claims;
-
-import java.util.Base64;
 import java.util.Date;
-
 import javax.crypto.SecretKey;
-
 import org.springframework.stereotype.Component;
-
 import ca.javau11.entities.User;
 
 @Component
@@ -23,7 +18,7 @@ public class JwtUtils {
         Date expiryDate = new Date(now.getTime() + 86400000); // 1 day expiration
 
         return Jwts.builder()
-                .setSubject(existingUser.getEmail()) // Set email (or other identifying info)
+                .setSubject(existingUser.getEmail())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(SECRET_KEY)
@@ -31,8 +26,9 @@ public class JwtUtils {
     }
 
     public static Claims validateToken(String token) {
-        return Jwts.parser()
+    	return Jwts.parserBuilder()
                 .setSigningKey(SECRET_KEY)
+                .build() 
                 .parseClaimsJws(token)
                 .getBody();
     }

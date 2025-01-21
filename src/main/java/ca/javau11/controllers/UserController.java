@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ca.javau11.entities.User;
 import ca.javau11.services.UserService;
 import ca.javau11.utils.Response;
+import jakarta.validation.Valid;
 
 @CrossOrigin
 @RestController
@@ -24,7 +25,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/register")
-    public ResponseEntity<Response<User>> createUser(@RequestBody User user) {
+    public ResponseEntity<Response<User>> createUser(@Valid @RequestBody User user) {
         Response<User> response = userService.addUser(user);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }

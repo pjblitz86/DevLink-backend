@@ -28,7 +28,17 @@ public class UserService {
     }
 
     public Response<User> addUser(User user) {
-        if (userRepo.findByEmail(user.getEmail()) != null) {
+    	if (user.getName() == null || user.getName().isEmpty()) {
+            return new Response<>("Name is required");
+        }
+        if (user.getEmail() == null || user.getEmail().isEmpty()) {
+            return new Response<>("Email is required");
+        }
+        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+            return new Response<>("Password is required");
+        }
+    	
+    	if (userRepo.findByEmail(user.getEmail()) != null) {
             throw new DuplicateEmailException("Email is already in use");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -43,8 +53,7 @@ public class UserService {
         if (existingUser != null && passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
             String jwtToken = JwtUtils.generateToken(existingUser);
             return new Response<>("Login successful", existingUser, jwtToken);
-        }
-        
+        } 
         throw new AuthenticationException("Invalid email or password");
     }
 

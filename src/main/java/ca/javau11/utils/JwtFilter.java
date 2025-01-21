@@ -1,6 +1,5 @@
 package ca.javau11.utils;
 
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -15,24 +14,33 @@ import java.io.IOException;
 @WebFilter("/*")
 public class JwtFilter implements Filter {
 
-	public void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
-        String token = request.getHeader("Authorization");
+	@Override
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
+	        throws IOException, ServletException {
 
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);
+	    HttpServletRequest httpRequest = (HttpServletRequest) request;
+	    HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-            if (!JwtUtils.isTokenExpired(token)) {
-                Claims claims = JwtUtils.validateToken(token);
-                String username = claims.getSubject();
-            } else {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token has expired");
-                return;
-            }
-        }
+	    String token = httpRequest.getHeader("Authorization");
 
-        filterChain.doFilter(request, response);
-    }
+	    if (token != null && token.startsWith("Bearer ")) {
+	        token = token.substring(7);
+
+	        try {
+	            if (!JwtUtils.isTokenExpired(token)) {
+	                JwtUtils.validateToken(token);
+	                httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token has expired");
+	                return;
+	            }
+	        } catch (Exception e) {
+	            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+	            return;
+	        }
+	    }
+
+	    filterChain.doFilter(request, response);
+	}
+
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -42,10 +50,4 @@ public class JwtFilter implements Filter {
     public void destroy() {
     }
 
-	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-			throws IOException, ServletException {
-		// TODO Auto-generated method stub
-		
-	}
 }
