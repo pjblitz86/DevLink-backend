@@ -3,7 +3,6 @@ package ca.javau11.controllers;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -18,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ca.javau11.entities.Profile;
+import ca.javau11.entities.User;
 import ca.javau11.services.ProfileService;
 
 @WebMvcTest(ProfileController.class)
@@ -46,11 +46,16 @@ public class ProfileControllerTest {
     }
 
     @Test
-    public void testGetProfile() throws Exception {
-        Profile profile = new Profile("Company1", "Location1", "Status1", Arrays.asList("Java", "Spring"));
-        when(profileService.getProfile(1L)).thenReturn(Optional.of(profile));
+    public void testGetProfileByUserId() throws Exception {
+        User user = new User();
+        user.setId(1L);
 
-        mockMvc.perform(get("/profile/1"))
+        Profile profile = new Profile("Company1", "Location1", "Status1", Arrays.asList("Java", "Spring"));
+        profile.setUser(user);
+
+        when(profileService.getProfileByUserId(1L)).thenReturn(Optional.of(profile));
+
+        mockMvc.perform(get("/user/1/profile"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.company").value("Company1"));
     }

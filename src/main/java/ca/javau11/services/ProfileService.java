@@ -25,9 +25,10 @@ public class ProfileService {
 		return profileRepo.findAll();
 	}
 	
-	public Optional<Profile> getProfile(Long id) {
-		return profileRepo.findById(id);
-	}
+	public Optional<Profile> getProfileByUserId(Long userId) {
+        return userRepo.findById(userId)
+            .flatMap(user -> profileRepo.findByUser(user));
+    }
 	
 	public Profile addProfile(Long userId, Profile profile) {
 		

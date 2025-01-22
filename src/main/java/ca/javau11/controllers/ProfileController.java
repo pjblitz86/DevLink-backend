@@ -31,9 +31,9 @@ public class ProfileController {
 		return profileService.getProfiles();
 	}
 	
-	@GetMapping("/profile/{id}")
-	public ResponseEntity<Profile> getProfile(@PathVariable Long id) {
-		Optional<Profile> box = profileService.getProfile(id);
+	@GetMapping("/profile/{userId}")
+	public ResponseEntity<Profile> getProfileByUserId(@PathVariable Long userId) {
+		Optional<Profile> box = profileService.getProfileByUserId(userId);
 		return ResponseEntity.of(box);
 	}
 	
