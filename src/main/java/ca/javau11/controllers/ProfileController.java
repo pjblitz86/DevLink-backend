@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ca.javau11.entities.Profile;
 import ca.javau11.services.ProfileService;
 
-@CrossOrigin
 @RestController
 public class ProfileController {
 
@@ -37,7 +36,7 @@ public class ProfileController {
 		return ResponseEntity.of(box);
 	}
 	
-	@PostMapping("user/{id}/profile/add")
+	@PostMapping("/profile/user/{id}")
 	public Profile createProfile(@PathVariable Long id, @RequestBody Profile profile) {
 		return profileService.addProfile(id, profile);
 	}

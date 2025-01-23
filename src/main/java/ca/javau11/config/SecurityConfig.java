@@ -18,11 +18,12 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())  // Disable CSRF for simplicity (enable it for production)
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/user/{id}", "/register", "/login").permitAll()  // Allow access to registration and login
-                .anyRequest().authenticated()  // Require authentication for all other requests
-            )
+	        .csrf(csrf -> csrf.disable())  // Disable CSRF for simplicity (enable it for production)
+	        .authorizeHttpRequests(auth -> auth
+	            .requestMatchers("/register", "/login").permitAll() // Allow registration and login without authentication
+	            .requestMatchers("/profile/**", "user/**").authenticated() // Require authentication for any /profile/{userId} path
+	            .anyRequest().authenticated()  // Require authentication for all other requests
+	        )
             .sessionManagement(session -> session.sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.STATELESS))  // Use stateless session management
             .addFilterBefore(new JwtFilter(), org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class); // Add custom JWT filter before authentication
 
@@ -32,14 +33,5 @@ public class SecurityConfig {
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();  // Password encoder bean
-    }
-
-    @Bean
-    FilterRegistrationBean<JwtFilter> jwtFilterRegistrationBean() {
-        FilterRegistrationBean<JwtFilter> registrationBean = new FilterRegistrationBean<>();
-        registrationBean.setFilter(new JwtFilter());
-        registrationBean.addUrlPatterns("/api/*"); // Adjust the URL pattern as needed
-        registrationBean.setOrder(1); // Set the filter order if needed
-        return registrationBean;
     }
 }

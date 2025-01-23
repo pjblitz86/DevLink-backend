@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ca.javau11.entities.Education;
 import ca.javau11.services.EducationService;
 
-@CrossOrigin
 @RestController
 public class EducationController {
 

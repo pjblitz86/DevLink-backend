@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ca.javau11.entities.Experience;
 import ca.javau11.services.ExperienceService;
 
-@CrossOrigin
 @RestController
 public class ExperienceController {
 

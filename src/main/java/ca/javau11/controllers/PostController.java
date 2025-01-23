@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ca.javau11.entities.Post;
 import ca.javau11.services.PostService;
 
-@CrossOrigin
 @RestController
 public class PostController {
 

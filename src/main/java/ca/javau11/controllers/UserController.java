@@ -14,7 +14,6 @@ import ca.javau11.services.UserService;
 import ca.javau11.utils.Response;
 import jakarta.validation.Valid;
 
-@CrossOrigin
 @RestController
 public class UserController {
 

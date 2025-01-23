@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ca.javau11.entities.Comment;
 import ca.javau11.services.CommentService;
 
-@CrossOrigin
 @RestController
 public class CommentController {
 
