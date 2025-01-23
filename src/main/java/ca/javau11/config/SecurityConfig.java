@@ -13,20 +13,26 @@ import ca.javau11.utils.JwtFilter;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
+	
+	private final JwtFilter jwtFilter;
+	
+	public SecurityConfig(JwtFilter jwtFilter) {
+        this.jwtFilter = jwtFilter;
+    }
+	
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-	        .csrf(csrf -> csrf.disable())  // Disable CSRF for simplicity (enable it for production)
+    	http
+	        .csrf(csrf -> csrf.disable()) // Disable CSRF for simplicity
 	        .authorizeHttpRequests(auth -> auth
-	            .requestMatchers("/register", "/login").permitAll() // Allow registration and login without authentication
-	            .requestMatchers("/profile/**", "user/**").authenticated() // Require authentication for any /profile/{userId} path
-	            .anyRequest().authenticated()  // Require authentication for all other requests
+	            .requestMatchers("/register", "/login").permitAll() // Allow unauthenticated access to /register and /login
+	            .requestMatchers("/profile/**", "/user/**").authenticated() // Require authentication for /profile and /user endpoints
+	            .anyRequest().authenticated() // All other requests require authentication
 	        )
-            .sessionManagement(session -> session.sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.STATELESS))  // Use stateless session management
-            .addFilterBefore(new JwtFilter(), org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class); // Add custom JWT filter before authentication
+	        .sessionManagement(session -> session.sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.STATELESS)) // Stateless session management
+	        .addFilterBefore(jwtFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class); // Add custom JWT filter before authentication
 
-        return http.build();
+    	return http.build();
     }
 
     @Bean

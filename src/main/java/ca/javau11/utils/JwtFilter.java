@@ -21,14 +21,14 @@ public class JwtFilter implements Filter {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
-
+        
         String token = httpRequest.getHeader("Authorization");
 
         if (token == null || !token.startsWith("Bearer ")) {
-            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authorization header missing or malformed");
+        	filterChain.doFilter(request, response);
             return;
         }
-
+        
         token = token.substring(7);
 
         try {
