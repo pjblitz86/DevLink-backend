@@ -2,7 +2,6 @@ package ca.javau11.services;
 
 import java.util.Optional;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +12,14 @@ import ca.javau11.exceptions.UserNotFoundException;
 import ca.javau11.repositories.UserRepository;
 import ca.javau11.utils.JwtUtils;
 import ca.javau11.utils.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class UserService {
 
+	private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+	
     private final UserRepository userRepo;
     private final PasswordEncoder passwordEncoder;
     
@@ -24,7 +27,7 @@ public class UserService {
     				   PasswordEncoder passwordEncoder,
     				   JwtUtils jwtUtils) {
         this.userRepo = userRepo;
-        this.passwordEncoder = new BCryptPasswordEncoder();
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Response<User> addUser(User user) {
@@ -49,11 +52,21 @@ public class UserService {
     }
 
     public Response<User> loginUser(User user) {
-        User existingUser = userRepo.findByEmail(user.getEmail());
-        if (existingUser != null && passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
-            String jwtToken = JwtUtils.generateToken(existingUser);
-            return new Response<>("Login successful", existingUser, jwtToken);
-        } 
+        logger.info("Attempting login for email: " + user.getEmail());
+
+        Optional<User> optionalUser = userRepo.findByEmail(user.getEmail());
+        if (optionalUser.isPresent()) {
+        	logger.info("User found: " + optionalUser.get());
+            if (passwordEncoder.matches(user.getPassword(), optionalUser.get().getPassword())) {
+                String jwtToken = JwtUtils.generateToken(optionalUser.get());
+                logger.info("Login successful, token generated");
+                return new Response<>("Login successful", optionalUser.get(), jwtToken);
+            } else {
+            	logger.info("Password mismatch");
+            }
+        } else {
+        	logger.info("User not found with email: " + user.getEmail());
+        }
         throw new AuthenticationException("Invalid email or password");
     }
 
