@@ -12,8 +12,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import ca.javau11.dtos.ProfileDTO;
 import ca.javau11.entities.Profile;
 import ca.javau11.services.ProfileService;
+import ca.javau11.utils.Response;
+import jakarta.validation.Valid;
 
 @RestController
 public class ProfileController {
@@ -30,21 +33,29 @@ public class ProfileController {
 	}
 	
 	@GetMapping("/profile/{userId}")
-	public ResponseEntity<Profile> getProfileByUserId(@PathVariable Long userId) {
-		Optional<Profile> box = profileService.getProfileByUserId(userId);
-		return ResponseEntity.of(box);
+	public ResponseEntity<?> getProfileByUserId(@PathVariable Long userId) {
+	    Optional<Profile> box = profileService.getProfileByUserId(userId);
+	    if (box.isEmpty()) {
+	    	return ResponseEntity.ok(new Response<>("No profile exists for this user", null));
+	    }
+	    return ResponseEntity.ok(new Response<>("Profile found", box.get()));
 	}
 	
-	@PostMapping("/profile/user/{id}")
-	public Profile createProfile(@PathVariable Long id, @RequestBody Profile profile) {
-		return profileService.addProfile(id, profile);
-	}
+	@PostMapping("/profile/{userId}")
+	public ResponseEntity<?> createProfile(
+            @PathVariable Long userId,
+            @Valid @RequestBody ProfileDTO profileDTO) {
+        Profile profile = profileService.addProfile(userId, profileDTO);
+        return ResponseEntity.status(201).body(new Response<>("Profile successfully created", profile));
+    }
 	
-	@PutMapping("profile/{id}")
-	public ResponseEntity<Profile> updateProfile(@PathVariable Long id, @RequestBody Profile profile) {
-		Optional<Profile> box = profileService.updateProfile(id, profile);
-		return ResponseEntity.of(box);
-	}
+	@PutMapping("profile/{userId}")
+	public ResponseEntity<?> updateProfile(
+            @PathVariable Long userId,
+            @Valid @RequestBody ProfileDTO profileDTO) {
+        Profile profile = profileService.updateProfile(userId, profileDTO);
+        return ResponseEntity.ok(new Response<>("Profile successfully updated", profile));
+    }
 	
 	@DeleteMapping("profile/{id}")
 	public ResponseEntity<Void> deleteProfile(@PathVariable Long id) {

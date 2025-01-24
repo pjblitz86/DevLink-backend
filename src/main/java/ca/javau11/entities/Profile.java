@@ -3,8 +3,6 @@ package ca.javau11.entities;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -31,7 +29,7 @@ public class Profile {
 	
 	private String company;
 	private String website;
-	private String location;
+	private String location;	
 	private String status;
 	private List<String> skills;
 	private String bio;

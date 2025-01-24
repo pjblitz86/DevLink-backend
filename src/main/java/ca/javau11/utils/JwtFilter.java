@@ -2,14 +2,16 @@ package ca.javau11.utils;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -32,14 +34,16 @@ public class JwtFilter implements Filter {
         token = token.substring(7);
 
         try {
-            if (JwtUtils.isTokenExpired(token)) {
-                httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token has expired");
-                return;
+            String username = JwtUtils.extractUsername(token);
+
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(username, null, List.of());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-            JwtUtils.validateToken(token);
 
         } catch (Exception e) {
-            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+            httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "Invalid token");
             return;
         }
 

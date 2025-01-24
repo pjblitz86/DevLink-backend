@@ -10,7 +10,12 @@ public class Response<T> {
         this.data = data;
         this.token = token;
     }
-
+    
+    public Response(String message, T data) {
+        this.message = message;
+        this.data = data;
+    }
+    
     public Response(String message) {
         this.message = message;
         this.data = null;

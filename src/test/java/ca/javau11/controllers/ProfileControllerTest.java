@@ -16,9 +16,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import ca.javau11.dtos.ProfileDTO;
 import ca.javau11.entities.Profile;
 import ca.javau11.entities.User;
 import ca.javau11.services.ProfileService;
+import ca.javau11.utils.Response;
 
 @WebMvcTest(ProfileController.class)
 public class ProfileControllerTest {
@@ -55,33 +57,65 @@ public class ProfileControllerTest {
 
         when(profileService.getProfileByUserId(1L)).thenReturn(Optional.of(profile));
 
-        mockMvc.perform(get("/user/1/profile"))
+        mockMvc.perform(get("/profile/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.company").value("Company1"));
+                .andExpect(jsonPath("$.data.company").value("Company1"));
     }
 
     @Test
     public void testCreateProfile() throws Exception {
-        Profile profile = new Profile("Company1", "Location1", "Status1", Arrays.asList("Java", "Spring"));
-        when(profileService.addProfile(eq(1L), any(Profile.class))).thenReturn(profile);
+        ProfileDTO profileDTO = new ProfileDTO(
+                "Company1",
+                "Location1",
+                "Status1",
+                "Java,Spring",
+                "Experienced developer",
+                "github123",
+                "https://youtube.com",
+                "https://twitter.com",
+                null,
+                "https://linkedin.com",
+                null, 
+                null
+        );
 
-        mockMvc.perform(post("/user/1/profile/add")
+        Profile profile = new Profile("Company1", "Location1", "Status1", Arrays.asList("Java", "Spring"));
+        when(profileService.addProfile(eq(1L), any(ProfileDTO.class))).thenReturn(profile);
+
+        mockMvc.perform(post("/profile/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(profile)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.company").value("Company1"));
+                .content(objectMapper.writeValueAsString(profileDTO)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.message").value("Profile successfully created"))
+                .andExpect(jsonPath("$.data.company").value("Company1"));
     }
 
     @Test
     public void testUpdateProfile() throws Exception {
+        ProfileDTO profileDTO = new ProfileDTO(
+                "UpdatedCompany",
+                "UpdatedLocation",
+                "UpdatedStatus",
+                "Java",
+                "Updated bio",
+                "updatedGithub",
+                null,
+                null,
+                null,
+                null,
+                null, 
+                null
+        );
+
         Profile profile = new Profile("UpdatedCompany", "UpdatedLocation", "UpdatedStatus", Arrays.asList("Java"));
-        when(profileService.updateProfile(eq(1L), any(Profile.class))).thenReturn(Optional.of(profile));
+        when(profileService.updateProfile(eq(1L), any(ProfileDTO.class))).thenReturn(profile);
 
         mockMvc.perform(put("/profile/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(profile)))
+                .content(objectMapper.writeValueAsString(profileDTO)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.company").value("UpdatedCompany"));
+                .andExpect(jsonPath("$.message").value("Profile successfully updated"))
+                .andExpect(jsonPath("$.data.company").value("UpdatedCompany"));
     }
 
     @Test

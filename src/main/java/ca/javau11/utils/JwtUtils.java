@@ -26,11 +26,15 @@ public class JwtUtils {
     }
 
     public static Claims validateToken(String token) {
-    	return Jwts.parserBuilder()
-                .setSigningKey(SECRET_KEY)
-                .build() 
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(SECRET_KEY)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid or expired JWT token", e);
+        }
     }
 
     public static String extractUsername(String token) {
