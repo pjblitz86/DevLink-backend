@@ -73,4 +73,12 @@ public class UserService {
         	throw new UserNotFoundException("User not found with id: " + id);
         }
     }
+
+	public boolean deleteUserById(Long id) {
+		Optional<User> box = userRepo.findById(id);
+	    if (box.isEmpty()) return false;	    
+	    User user = box.get();
+	    userRepo.delete(user);
+	    return true;
+	}
 }

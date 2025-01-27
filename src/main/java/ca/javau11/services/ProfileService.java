@@ -61,8 +61,8 @@ public class ProfileService {
         return profileRepo.save(existingProfile);
     }
 	
-	public boolean deleteProfile(Long id) {
-		Optional<Profile> box = profileRepo.findById(id);
+	public boolean deleteProfile(Long profileId) {
+		Optional<Profile> box = profileRepo.findById(profileId);
 	    if (box.isEmpty()) return false;
 	    
 	    Profile profile = box.get();

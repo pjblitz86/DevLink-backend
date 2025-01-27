@@ -30,13 +30,13 @@ public class GlobalExceptionHandler {
     }
    
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<?> handleValidationException(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
-        BindingResult bindingResult = ex.getBindingResult();
-        for (FieldError error : bindingResult.getFieldErrors()) {
-            errors.put(error.getField(), error.getDefaultMessage()); // Map field name to error message
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+        ex.getBindingResult().getFieldErrors().forEach(error -> 
+            errors.put(error.getField(), error.getDefaultMessage())
+        );
+        System.out.println("Validation errors: " + errors);
+        return ResponseEntity.badRequest().body(errors);
     }
     
     @ExceptionHandler(ProfileAlreadyExistsException.class)

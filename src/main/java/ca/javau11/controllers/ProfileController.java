@@ -57,9 +57,9 @@ public class ProfileController {
         return ResponseEntity.ok(new Response<>("Profile successfully updated", profile));
     }
 	
-	@DeleteMapping("profile/{id}")
-	public ResponseEntity<Void> deleteProfile(@PathVariable Long id) {
-		boolean isDeleted = profileService.deleteProfile(id);
+	@DeleteMapping("profile/{profileId}")
+	public ResponseEntity<Void> deleteProfile(@PathVariable Long profileId) {
+		boolean isDeleted = profileService.deleteProfile(profileId);
 		return isDeleted? 
 				ResponseEntity.ok().build() 
 				: ResponseEntity.notFound().build();

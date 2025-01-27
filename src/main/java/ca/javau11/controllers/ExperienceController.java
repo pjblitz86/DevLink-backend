@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,9 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 import ca.javau11.entities.Experience;
 import ca.javau11.services.ExperienceService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @RestController
 public class ExperienceController {
-
+	
+	private static final Logger logger = LoggerFactory.getLogger(ExperienceController.class);
+	
 	private ExperienceService experienceService;
 	
 	public ExperienceController(ExperienceService experienceService) {
@@ -35,7 +39,7 @@ public class ExperienceController {
         Optional<Experience> box = experienceService.getExperienceById(id);
         return ResponseEntity.of(box);
     }
-
+    
     @PostMapping("/profile/{profileId}/experience/add")
     public ResponseEntity<Experience> addExperience(
             @PathVariable Long profileId,

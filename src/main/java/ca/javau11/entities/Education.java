@@ -3,6 +3,7 @@ package ca.javau11.entities;
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -11,6 +12,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Education {
@@ -20,15 +23,25 @@ public class Education {
 	private Long id;
 	
 	@ManyToOne(cascade = CascadeType.PERSIST)
-	@JoinColumn(name = "education_id", referencedColumnName = "id")
+	@JoinColumn(name = "profile_id", referencedColumnName = "id")
 	@JsonBackReference
 	private Profile profile;
 	
+	@NotEmpty(message = "School is required")
 	private String school;
+	
+	@NotEmpty(message = "Degree is required")
 	private String degree;
+	
 	private String fieldOfStudy;
+	
+	@NotNull(message = "Start date is required")
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate startDate;
+	
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate endDate;
+	
 	private Boolean current;
 	private String description;
 	

@@ -1,8 +1,10 @@
 package ca.javau11.entities;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -11,6 +13,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Experience {
@@ -20,15 +24,24 @@ public class Experience {
 	private Long id;
 	
 	@ManyToOne(cascade = CascadeType.PERSIST)
-	@JoinColumn(name = "experience_id", referencedColumnName = "id")
+	@JoinColumn(name = "profile_id", referencedColumnName = "id")
 	@JsonBackReference
 	private Profile profile;
 	
+	@NotEmpty(message = "Title is required")
 	private String title;
+	
+	@NotEmpty(message = "Company is required")
 	private String company;
 	private String location;
+	
+	@NotNull(message = "Start date is required")
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate startDate;
+	
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate endDate;
+	
 	private Boolean current;
 	private String description;
 	
@@ -117,12 +130,5 @@ public class Experience {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
-	@Override
-	public String toString() {
-		return "Experience [id=" + id + ", profile=" + profile + ", title=" + title + ", company=" + company
-				+ ", location=" + location + ", startDate=" + startDate + ", endDate=" + endDate + ", current="
-				+ current + ", description=" + description + "]";
-	}
-
+	
 }

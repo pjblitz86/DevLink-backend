@@ -1,17 +1,24 @@
 package ca.javau11.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import ca.javau11.controllers.ExperienceController;
+import ca.javau11.entities.Education;
 import ca.javau11.entities.Experience;
 import ca.javau11.entities.Profile;
 import ca.javau11.repositories.ProfileRepository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 public class ExperienceService {
-
+	
+	private static final Logger logger = LoggerFactory.getLogger(ExperienceService.class);
 	private ProfileRepository profileRepo;
 
 	public ExperienceService(ProfileRepository profileRepo) {
@@ -30,10 +37,10 @@ public class ExperienceService {
                 .filter(experience -> experience.getId().equals(experienceId))
                 .findFirst();
 	}
-
+	
 	public Optional<Experience> addExperienceToProfile(Long profileId, Experience experience) {
 		return profileRepo.findById(profileId).map(profile -> {
-            experience.setProfile(profile);
+			experience.setProfile(profile);
             profile.getExperiences().add(experience);
             profileRepo.save(profile);
             return experience;
