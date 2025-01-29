@@ -25,8 +25,8 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable()) // Disable CSRF for simplicity
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/register", "/login", "/profile/**").permitAll() // Allow unauthenticated access to /register and /login
-                .requestMatchers("/profile/**", "/user/**").authenticated() // Require authentication for /profile and /user
+                .requestMatchers("/register", "/login", "/profile/**", "/api/github/**", "/profiles").permitAll() // Allow unauthenticated access to /register and /login
+                .requestMatchers("/profile/**", "/user/**", "/post/**", "/posts").authenticated() // Require authentication for /profile and /user
                 .anyRequest().authenticated() // All other requests require authentication
             )
             .sessionManagement(session -> session.sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.STATELESS)) // Stateless session management

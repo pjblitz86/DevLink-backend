@@ -1,13 +1,13 @@
 package ca.javau11.entities;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -40,13 +40,13 @@ public class Post {
 	@ManyToMany(mappedBy = "likedPosts")
 	private List<User> likes;
 	
-	@Column(columnDefinition = "TIMESTAMP")
-	private LocalDateTime date;
+	@JsonFormat(pattern = "yyyy-MM-dd")
+	private LocalDate date;
 	
 	public Post() {}
 
 	public Post(User user, List<Comment> comments, String text, String name, String avatar, List<User> likes,
-			LocalDateTime date) {
+			LocalDate date) {
 		this.user = user;
 		this.comments = comments;
 		this.text = text;
@@ -112,11 +112,11 @@ public class Post {
 		this.likes = likes;
 	}
 
-	public LocalDateTime getDate() {
+	public LocalDate getDate() {
 		return date;
 	}
 
-	public void setDate(LocalDateTime date) {
+	public void setDate(LocalDate date) {
 		this.date = date;
 	}
 

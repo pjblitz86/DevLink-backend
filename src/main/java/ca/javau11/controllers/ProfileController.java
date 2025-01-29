@@ -2,6 +2,7 @@ package ca.javau11.controllers;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,8 +29,23 @@ public class ProfileController {
 	}
 	
 	@GetMapping("/profiles")
-	public List<Profile> getProfiles() {
-		return profileService.getProfiles();
+	public ResponseEntity<?> getProfiles() {
+	    List<Profile> profiles = profileService.getProfiles();
+	    List<Profile> validProfiles = profiles.stream()
+	        .filter(profile -> profile.getUser() != null)
+	        .collect(Collectors.toList());
+	    return ResponseEntity.ok(validProfiles);
+	}
+	
+	@GetMapping("/profile/id/{profileId}")
+	public ResponseEntity<?> getProfileById(@PathVariable Long profileId) {
+	    Optional<Profile> profile = profileService.getProfileById(profileId);
+
+	    if (profile.isEmpty()) {
+	        return ResponseEntity.ok(new Response<>("No profile found with the given ID", null));
+	    }
+	    
+	    return ResponseEntity.ok(new Response<>("Profile found", profile.get()));
 	}
 	
 	@GetMapping("/profile/{userId}")

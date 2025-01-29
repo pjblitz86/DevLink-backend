@@ -34,7 +34,7 @@ public class Profile {
 	private String status;
 	private List<String> skills;
 	private String bio;
-	private String githubUserName;
+	private String githubusername;
 	private String youtube;
 	private String twitter;
 	private String facebook;
@@ -130,12 +130,12 @@ public class Profile {
 		this.bio = bio;
 	}
 
-	public String getGithubUserName() {
-		return githubUserName;
+	public String getGithubusername() {
+		return githubusername;
 	}
 
-	public void setGithubUserName(String githubUserName) {
-		this.githubUserName = githubUserName;
+	public void setGithubusername(String githubusername) {
+		this.githubusername = githubusername;
 	}
 
 	public String getYoutube() {
@@ -205,8 +205,8 @@ public class Profile {
 	@Override
 	public String toString() {
 		return "Profile [id=" + id + ", user=" + user + ", company=" + company + ", website=" + website + ", location="
-				+ location + ", status=" + status + ", skills=" + skills + ", bio=" + bio + ", githubUserName="
-				+ githubUserName + ", youtube=" + youtube + ", twitter=" + twitter + ", facebook=" + facebook
+				+ location + ", status=" + status + ", skills=" + skills + ", bio=" + bio + ", githubusername="
+				+ githubusername + ", youtube=" + youtube + ", twitter=" + twitter + ", facebook=" + facebook
 				+ ", linkedin=" + linkedin + ", instagram=" + instagram + ", date=" + date + ", experiences="
 				+ experiences + ", educations=" + educations + "]";
 	}

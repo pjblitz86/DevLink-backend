@@ -29,6 +29,10 @@ public class ProfileService {
 		return profileRepo.findAll();
 	}
 	
+	public Optional<Profile> getProfileById(Long profileId) {
+	    return profileRepo.findById(profileId);
+	}
+	
 	public Optional<Profile> getProfileByUserId(Long userId) {
 	    return profileRepo.findByUserId(userId);
 	}
@@ -89,7 +93,7 @@ public class ProfileService {
         profile.setStatus(profileDTO.getStatus());
         profile.setSkills(profileDTO.getSkillsAsList()); // Convert skills to List<String>
         profile.setBio(profileDTO.getBio());
-        profile.setGithubUserName(profileDTO.getGithubUserName());
+        profile.setGithubusername(profileDTO.getGithubusername());
         profile.setYoutube(profileDTO.getYoutube());
         profile.setTwitter(profileDTO.getTwitter());
         profile.setFacebook(profileDTO.getFacebook());
@@ -105,13 +109,12 @@ public class ProfileService {
         existingProfile.setStatus(profileDTO.getStatus());
         existingProfile.setSkills(profileDTO.getSkillsAsList());
         existingProfile.setBio(profileDTO.getBio());
-        existingProfile.setGithubUserName(profileDTO.getGithubUserName());
+        existingProfile.setGithubusername(profileDTO.getGithubusername());
         existingProfile.setYoutube(profileDTO.getYoutube());
         existingProfile.setTwitter(profileDTO.getTwitter());
         existingProfile.setFacebook(profileDTO.getFacebook());
         existingProfile.setLinkedin(profileDTO.getLinkedin());
         existingProfile.setInstagram(profileDTO.getInstagram());
     }
-	
-	
+
 }

@@ -19,7 +19,7 @@ public class ProfileDTO {
     private String skills;
 
     private String bio;
-    private String githubUserName;
+    private String githubsername;
     private String youtube;
     private String twitter;
     private String facebook;
@@ -29,7 +29,7 @@ public class ProfileDTO {
     public ProfileDTO() {}
     
     public ProfileDTO(String company, String website, String location, String status,
-            String skills, String bio, String githubUserName, String youtube,
+            String skills, String bio, String githubsername, String youtube,
             String twitter, String facebook, String linkedin, String instagram) {
 		this.company = company;
 		this.website = website;
@@ -37,7 +37,7 @@ public class ProfileDTO {
 		this.status = status;
 		this.skills = skills;
 		this.bio = bio;
-		this.githubUserName = githubUserName;
+		this.githubsername = githubsername;
 		this.youtube = youtube;
 		this.twitter = twitter;
 		this.facebook = facebook;
@@ -93,12 +93,12 @@ public class ProfileDTO {
         this.bio = bio;
     }
 
-    public String getGithubUserName() {
-        return githubUserName;
+    public String getGithubusername() {
+        return githubsername;
     }
 
-    public void setGithubUserName(String githubUserName) {
-        this.githubUserName = githubUserName;
+    public void setGithubusername(String githubsername) {
+        this.githubsername = githubsername;
     }
 
     public String getYoutube() {
