@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,18 +24,18 @@ public class CommentController {
 		this.commentService = commentService;
 	}
 	
-	@GetMapping("/post/{postId}/comments")
+	@GetMapping("post/{postId}/comments")
     public List<Comment> getCommentsByPost(@PathVariable Long postId) {
         return commentService.getCommentsByPostId(postId);
     }
     
-    @GetMapping("/comment/{id}")
-    public ResponseEntity<Comment> getComment(@PathVariable Long id) {
-        Optional<Comment> box = commentService.getCommentById(id);
+    @GetMapping("post/comment/{commentId}")
+    public ResponseEntity<Comment> getComment(@PathVariable Long commentId) {
+        Optional<Comment> box = commentService.getCommentById(commentId);
         return ResponseEntity.of(box);
     }
     
-    @PostMapping("/post/{postId}/comment/add")
+    @PostMapping("post/{postId}/comment")
     public ResponseEntity<Comment> addComment(
             @PathVariable Long postId,
             @RequestBody Comment comment) {
@@ -46,7 +45,7 @@ public class CommentController {
                 .orElse(ResponseEntity.badRequest().build());
     }
     
-    @PutMapping("/comment/{id}")
+    @PutMapping("post/comment/{id}")
     public ResponseEntity<Comment> updateComment(
             @PathVariable Long id,
             @RequestBody Comment comment) {
@@ -54,9 +53,9 @@ public class CommentController {
         return ResponseEntity.of(updatedComment);
     }
     
-    @DeleteMapping("/comment/{id}")
-    public ResponseEntity<Void> deleteComment(@PathVariable Long id) {
-        boolean isDeleted = commentService.deleteComment(id);
+    @DeleteMapping("post/comment/{commentId}")
+    public ResponseEntity<Void> deleteComment(@PathVariable Long commentId) {
+        boolean isDeleted = commentService.deleteComment(commentId);
         return isDeleted
                 ? ResponseEntity.noContent().build() 
                 : ResponseEntity.notFound().build();

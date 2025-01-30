@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -26,11 +27,12 @@ public class Post {
 	
 	@ManyToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "user_id", referencedColumnName = "id")
-	@JsonBackReference
+	@JsonIgnoreProperties({"posts", "likedPosts"})
 	private User user;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "post", orphanRemoval=true)
 	@JsonManagedReference
+	
 	private List<Comment> comments;
 	
 	private String text;
@@ -38,12 +40,15 @@ public class Post {
 	private String avatar;
 	
 	@ManyToMany(mappedBy = "likedPosts")
+	@JsonIgnoreProperties("likedPosts")
 	private List<User> likes;
 	
 	@JsonFormat(pattern = "yyyy-MM-dd")
-	private LocalDate date;
+	private LocalDate date = LocalDate.now();
 	
-	public Post() {}
+	public Post() {
+		this.date = LocalDate.now();
+	}
 
 	public Post(User user, List<Comment> comments, String text, String name, String avatar, List<User> likes,
 			LocalDate date) {
@@ -53,7 +58,7 @@ public class Post {
 		this.name = name;
 		this.avatar = avatar;
 		this.likes = likes;
-		this.date = date;
+		this.date = LocalDate.now();
 	}
 
 	public Long getId() {

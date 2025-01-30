@@ -6,6 +6,8 @@ import java.util.List;
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -13,6 +15,7 @@ import ca.javau11.utils.GravatarUtils;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -55,17 +58,19 @@ public class User {
 	@Column(columnDefinition = "TIMESTAMP", updatable = false)
 	private LocalDateTime date;
 	
-	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "user")
+	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "user", fetch = FetchType.LAZY)
 	@JsonManagedReference
+	@JsonIgnoreProperties("user")
 	private List<Post> posts;
 	
 	@ManyToMany
-    @JoinTable(
-        name = "user_likes_post", 
-        joinColumns = @JoinColumn(name = "user_id"), 
-        inverseJoinColumns = @JoinColumn(name = "post_id")
-    )
-    private List<Post> likedPosts;
+	@JoinTable(
+	    name = "user_likes_post", 
+	    joinColumns = @JoinColumn(name = "user_id"), 
+	    inverseJoinColumns = @JoinColumn(name = "post_id")
+	)
+	@JsonIgnoreProperties("likes")
+	private List<Post> likedPosts;
 	
 	public User() {}
 

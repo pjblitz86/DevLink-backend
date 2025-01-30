@@ -61,7 +61,7 @@ public class UserController {
         return userService.deleteUserById(id);
     }
 	
-	@GetMapping("api/github/{username}")
+	@GetMapping("/api/github/{username}")
     public ResponseEntity<Response<List<Object>>> getGithubRepos(@PathVariable String username) {
         logger.info("Fetching GitHub repositories for user: {}", username);
         String githubToken = githubProperties.getToken();

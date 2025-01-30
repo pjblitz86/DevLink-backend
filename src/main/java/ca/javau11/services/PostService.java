@@ -9,6 +9,7 @@ import ca.javau11.entities.Post;
 import ca.javau11.entities.User;
 import ca.javau11.repositories.PostRepository;
 import ca.javau11.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 
 @Service
 public class PostService {
@@ -59,5 +60,39 @@ public class PostService {
 	    postRepo.delete(post);
 	    return true;
 	}
+	
+	@Transactional
+    public boolean likePost(Long userId, Long postId) {
+        User user = userRepo.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+        Post post = postRepo.findById(postId)
+            .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        if (!user.getLikedPosts().contains(post)) {
+            user.getLikedPosts().add(post);
+            post.getLikes().add(user);
+            userRepo.save(user);
+            postRepo.save(post);
+            return true;
+        }
+        return false; // Already liked
+    }
+
+    @Transactional
+    public boolean unlikePost(Long userId, Long postId) {
+        User user = userRepo.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+        Post post = postRepo.findById(postId)
+            .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        if (user.getLikedPosts().contains(post)) {
+            user.getLikedPosts().remove(post);
+            post.getLikes().remove(user);
+            userRepo.save(user);
+            postRepo.save(post);
+            return true;
+        }
+        return false; // Not liked
+    }
 	
 }

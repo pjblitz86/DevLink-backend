@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,9 +35,9 @@ public class PostController {
 		return ResponseEntity.of(box);
 	}
     
-    @PostMapping("user/{id}/post/add")
-	public Post createPost(@PathVariable Long id, @RequestBody Post post) {
-		return postService.addPost(id, post);
+    @PostMapping("post/user/{userId}")
+	public Post createPost(@PathVariable Long userId, @RequestBody Post post) {
+		return postService.addPost(userId, post);
 	}
     
     @PutMapping("post/{id}")
@@ -54,5 +53,23 @@ public class PostController {
 				ResponseEntity.ok().build() 
 				: ResponseEntity.notFound().build();
 	}
+    
+    @PostMapping("post/{postId}/like/{userId}")
+    public ResponseEntity<?> likePost(@PathVariable Long userId, @PathVariable Long postId) {
+        boolean liked = postService.likePost(userId, postId);
+        if (liked) {
+            return ResponseEntity.ok("Post liked successfully.");
+        }
+        return ResponseEntity.badRequest().body("Post already liked.");
+    }
+
+    @DeleteMapping("post/{postId}/unlike/{userId}")
+    public ResponseEntity<?> unlikePost(@PathVariable Long userId, @PathVariable Long postId) {
+        boolean unliked = postService.unlikePost(userId, postId);
+        if (unliked) {
+            return ResponseEntity.ok("Post unliked successfully.");
+        }
+        return ResponseEntity.badRequest().body("Post was not liked.");
+    }
 	
 }
