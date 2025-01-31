@@ -25,7 +25,9 @@ public class JwtFilter implements Filter {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
 //        String requestURI = httpRequest.getRequestURI();
-//        if (requestURI.equals("/api/register") || requestURI.equals("/api/login") || requestURI.equals("/register") || requestURI.equals("/login") || requestURI.startsWith("/profiles")) {
+//        if (requestURI.equals("/api/register") || requestURI.equals("/api/login") ||
+//            requestURI.equals("/register") || requestURI.equals("/login") ||
+//            requestURI.startsWith("/profiles")) {
 //            filterChain.doFilter(request, response);
 //            return;
 //        }
