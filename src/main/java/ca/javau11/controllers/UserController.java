@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -38,7 +37,7 @@ public class UserController {
 		this.githubProperties = githubProperties;
 	}
 	
-	@PostMapping("/register")
+	@PostMapping(value = "/register", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Response<User>> createUser(@Valid @RequestBody User user) {
         Response<User> response = userService.addUser(user);
         return new ResponseEntity<>(response, HttpStatus.CREATED);

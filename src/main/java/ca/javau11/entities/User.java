@@ -59,8 +59,7 @@ public class User {
 	private LocalDateTime date;
 	
 	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "user", fetch = FetchType.LAZY)
-	@JsonManagedReference
-	@JsonIgnoreProperties("user")
+	@JsonIgnore
 	private List<Post> posts;
 	
 	@ManyToMany

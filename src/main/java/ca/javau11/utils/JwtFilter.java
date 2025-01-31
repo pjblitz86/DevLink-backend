@@ -1,60 +1,44 @@
 package ca.javau11.utils;
 
-import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 
+import io.jsonwebtoken.JwtException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
-public class JwtFilter implements Filter {
+public class JwtFilter extends OncePerRequestFilter {
+
+    private final JwtUtils jwtUtils;
+
+    public JwtFilter(JwtUtils jwtUtils) {
+        this.jwtUtils = jwtUtils;
+    }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
-            throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
-
-//        String requestURI = httpRequest.getRequestURI();
-//        if (requestURI.equals("/api/register") || requestURI.equals("/api/login") ||
-//            requestURI.equals("/register") || requestURI.equals("/login") ||
-//            requestURI.startsWith("/profiles")) {
-//            filterChain.doFilter(request, response);
-//            return;
-//        }
-        
-        String token = httpRequest.getHeader("Authorization");
-
-        if (token == null || !token.startsWith("Bearer ")) {
-        	filterChain.doFilter(request, response);
-            return;
+        String token = request.getHeader("Authorization");
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+            try {
+                String username = jwtUtils.extractUsername(token);
+                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(username, null, null);
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            } catch (JwtException ignored) {}
         }
-        
-        token = token.substring(7);
-
-        try {
-            String username = JwtUtils.extractUsername(token);
-
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(username, null, List.of());
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
-
-        } catch (Exception e) {
-            httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "Invalid token");
-            return;
-        }
-
         filterChain.doFilter(request, response);
     }
 }

@@ -22,12 +22,14 @@ public class UserService {
 	
     private final UserRepository userRepo;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtils jwtUtils;
     
     public UserService(UserRepository userRepo, 
     				   PasswordEncoder passwordEncoder,
     				   JwtUtils jwtUtils) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
+        this.jwtUtils = jwtUtils;
     }
 
     public Response<User> addUser(User user) {
@@ -48,7 +50,7 @@ public class UserService {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         User savedUser = userRepo.save(user);
-        String jwtToken = JwtUtils.generateToken(savedUser);
+        String jwtToken = jwtUtils.generateToken(savedUser);
         return new Response<>("User registered successfully", savedUser, jwtToken);
     }
 
@@ -61,7 +63,7 @@ public class UserService {
         if (!passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
             throw new AuthenticationException("Invalid email or password");
         }
-        String jwtToken = JwtUtils.generateToken(existingUser);
+        String jwtToken = jwtUtils.generateToken(existingUser);
         return new Response<>("Login successful", existingUser, jwtToken);
     }
 
