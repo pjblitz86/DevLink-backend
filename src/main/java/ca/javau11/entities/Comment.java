@@ -1,13 +1,11 @@
 package ca.javau11.entities;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,11 +29,11 @@ public class Comment {
 	private String name;
 	private String avatar;
 	
-	@JsonFormat(pattern = "yyyy-MM-dd")
-	private LocalDate date = LocalDate.now();
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private LocalDateTime date = LocalDateTime.now();
 	
 	public Comment() {
-		this.date = LocalDate.now();
+		this.date = LocalDateTime.now();
 	}
 
 	public Comment(Post post, String text, String name, String avatar, LocalDateTime date) {
@@ -43,7 +41,7 @@ public class Comment {
 		this.text = text;
 		this.name = name;
 		this.avatar = avatar;
-		this.date = LocalDate.now();
+		this.date = LocalDateTime.now();
 	}
 
 	public Long getId() {
@@ -86,11 +84,11 @@ public class Comment {
 		this.avatar = avatar;
 	}
 
-	public LocalDate getDate() {
+	public LocalDateTime getDate() {
 		return date;
 	}
 
-	public void setDate(LocalDate date) {
+	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
 

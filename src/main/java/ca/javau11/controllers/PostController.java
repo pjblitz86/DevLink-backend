@@ -1,6 +1,7 @@
 package ca.javau11.controllers;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
@@ -13,15 +14,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.javau11.entities.Post;
+import ca.javau11.exceptions.PostAlreadyLikedException;
+import ca.javau11.exceptions.PostNotLikedException;
+import ca.javau11.repositories.PostRepository;
 import ca.javau11.services.PostService;
 
 @RestController
 public class PostController {
 
 	private PostService postService;
+	private PostRepository postRepo;
 	
-	public PostController(PostService postService) {
+	public PostController(PostService postService, PostRepository postRepo) {
 		this.postService = postService;
+		this.postRepo = postRepo;
 	}
 	
 	@GetMapping("/posts")
@@ -58,18 +64,23 @@ public class PostController {
     public ResponseEntity<?> likePost(@PathVariable Long userId, @PathVariable Long postId) {
         boolean liked = postService.likePost(userId, postId);
         if (liked) {
-            return ResponseEntity.ok("Post liked successfully.");
+            Post post = postRepo.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+            return ResponseEntity.ok(Map.of("postId", postId, "likes", post.getLikes()));
         }
-        return ResponseEntity.badRequest().body("Post already liked.");
+        throw new PostAlreadyLikedException("You have already liked this post.");
     }
 
     @DeleteMapping("post/{postId}/unlike/{userId}")
     public ResponseEntity<?> unlikePost(@PathVariable Long userId, @PathVariable Long postId) {
         boolean unliked = postService.unlikePost(userId, postId);
         if (unliked) {
-            return ResponseEntity.ok("Post unliked successfully.");
+            Post post = postRepo.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+            return ResponseEntity.ok(Map.of("postId", postId, "likes", post.getLikes()));
         }
-        return ResponseEntity.badRequest().body("Post was not liked.");
+
+        throw new PostNotLikedException("You have not liked this post, nothing to unlike.");
     }
 	
 }

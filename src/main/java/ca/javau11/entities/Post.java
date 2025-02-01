@@ -1,9 +1,9 @@
 package ca.javau11.entities;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -43,11 +43,11 @@ public class Post {
 	@JsonIgnoreProperties("likedPosts")
 	private List<User> likes;
 	
-	@JsonFormat(pattern = "yyyy-MM-dd")
-	private LocalDate date = LocalDate.now();
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private LocalDateTime date = LocalDateTime.now();
 	
 	public Post() {
-		this.date = LocalDate.now();
+		this.date = LocalDateTime.now();
 	}
 
 	public Post(User user, List<Comment> comments, String text, String name, String avatar, List<User> likes,
@@ -58,7 +58,7 @@ public class Post {
 		this.name = name;
 		this.avatar = avatar;
 		this.likes = likes;
-		this.date = LocalDate.now();
+		this.date = LocalDateTime.now();
 	}
 
 	public Long getId() {
@@ -117,11 +117,11 @@ public class Post {
 		this.likes = likes;
 	}
 
-	public LocalDate getDate() {
+	public LocalDateTime getDate() {
 		return date;
 	}
 
-	public void setDate(LocalDate date) {
+	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
 

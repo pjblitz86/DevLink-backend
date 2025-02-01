@@ -49,4 +49,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
     
+    @ExceptionHandler(PostAlreadyLikedException.class)
+    public ResponseEntity<String> handlePostAlreadyLikedException(PostAlreadyLikedException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+    
+    @ExceptionHandler(PostNotLikedException.class)
+    public ResponseEntity<String> handlePostNotLikedException(PostNotLikedException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
 }
