@@ -4,6 +4,7 @@ import ca.javau11.utils.JwtFilter;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -28,9 +29,12 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/register", "/login", "/profiles/**", "/profile/**", "/post/**").permitAll()
+                .requestMatchers("/register", "/login", "/profiles/**", "/profile/**", "/api/post/**", "/post/**", "/api/jobs/**", "/jobs/**").permitAll()
 //                .anyRequest().permitAll()
 //                .requestMatchers().authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/jobs/**").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/post/**").hasRole("USER")
+                .requestMatchers(HttpMethod.POST, "/api/jobs").hasRole("USER")
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
