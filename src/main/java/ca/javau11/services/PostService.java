@@ -50,12 +50,17 @@ public class PostService {
 		return Optional.empty();
 	}
 
-	public boolean deletePost(Long id) {
-		Optional<Post> box = postRepo.findById(id);
+	public boolean deletePost(Long postId, Long userId) {
+		Optional<Post> box = postRepo.findById(postId);
 	    if (box.isEmpty()) return false;
 	    
 	    Post post = box.get();
-	    post.setUser(null);
+	    User authenticatedUser = userRepo.findById(userId)
+	            .orElseThrow(() -> new RuntimeException("User not found"));
+
+	        if (!post.getUser().getId().equals(authenticatedUser.getId())) {
+	            throw new RuntimeException("You do not have permission to delete this post.");
+	        }
 	    
 	    postRepo.delete(post);
 	    return true;

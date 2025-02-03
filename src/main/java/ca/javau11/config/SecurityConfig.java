@@ -1,6 +1,7 @@
 package ca.javau11.config;
 
 import ca.javau11.utils.JwtFilter;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,8 +28,9 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/register", "/login", "/profiles/**", "/profile/**").permitAll()
+                .requestMatchers("/register", "/login", "/profiles/**", "/profile/**", "/post/**").permitAll()
 //                .anyRequest().permitAll()
+//                .requestMatchers().authenticated()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
@@ -43,6 +45,6 @@ public class SecurityConfig {
 
     @Bean
     PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // Secure password hashing
+        return new BCryptPasswordEncoder();
     }
 }

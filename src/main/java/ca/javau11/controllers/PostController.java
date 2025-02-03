@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.javau11.entities.Post;
@@ -21,7 +24,8 @@ import ca.javau11.services.PostService;
 
 @RestController
 public class PostController {
-
+	
+	private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 	private PostService postService;
 	private PostRepository postRepo;
 	
@@ -52,9 +56,15 @@ public class PostController {
 		return ResponseEntity.of(box);
 	}
     
+    @GetMapping("post/test")
+    	public void testEndPoint() {
+    	logger.debug("test endpoint");
+    }
+    
     @DeleteMapping("post/{id}")
-	public ResponseEntity<Void> deletePost(@PathVariable Long id) {
-		boolean isDeleted = postService.deletePost(id);
+	public ResponseEntity<Void> deletePost(@PathVariable Long postId, @RequestParam Long userId) {
+		logger.info("call to controller");
+		boolean isDeleted = postService.deletePost(postId, userId);
 		return isDeleted? 
 				ResponseEntity.ok().build() 
 				: ResponseEntity.notFound().build();

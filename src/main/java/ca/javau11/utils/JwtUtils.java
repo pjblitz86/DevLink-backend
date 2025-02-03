@@ -3,6 +3,7 @@ package ca.javau11.utils;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import ca.javau11.entities.User;
 
@@ -50,9 +51,10 @@ public class JwtUtils {
                 .before(new Date());
     }
 
-    public boolean validateToken(String token, String userEmail) {
+    public boolean validateToken(String token, UserDetails userDetails) {
         try {
-            return extractUsername(token).equals(userEmail) && !isTokenExpired(token);
+            String extractedUsername = extractUsername(token);
+            return extractedUsername.equals(userDetails.getUsername()) && !isTokenExpired(token);
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
