@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.javau11.entities.Experience;
@@ -19,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RestController
+@RequestMapping("/api")
 public class ExperienceController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ExperienceController.class);
@@ -29,7 +31,7 @@ public class ExperienceController {
 		this.experienceService = experienceService;
 	}
 	
-	@GetMapping("/profile/{profileId}/experiences")
+	@GetMapping("/profiles/{profileId}/experiences")
     public List<Experience> getExperiencesByProfile(@PathVariable Long profileId) {
         return experienceService.getExperiencesByProfileId(profileId);
     }
@@ -40,7 +42,7 @@ public class ExperienceController {
         return ResponseEntity.of(box);
     }
     
-    @PostMapping("/profile/{profileId}/experience/add")
+    @PostMapping("/profiles/{profileId}/experience/add")
     public ResponseEntity<Experience> addExperience(
             @PathVariable Long profileId,
             @RequestBody Experience experience) {

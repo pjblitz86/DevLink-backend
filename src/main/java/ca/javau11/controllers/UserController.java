@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -26,6 +27,7 @@ import ca.javau11.utils.Response;
 import jakarta.validation.Valid;
 
 @RestController
+@RequestMapping("/api")
 public class UserController {
 
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -60,7 +62,7 @@ public class UserController {
         return userService.deleteUserById(id);
     }
 	
-	@GetMapping("/api/github/{username}")
+	@GetMapping("/github/{username}")
     public ResponseEntity<Response<List<Object>>> getGithubRepos(@PathVariable String username) {
         logger.info("Fetching GitHub repositories for user: {}", username);
         String githubToken = githubProperties.getToken();

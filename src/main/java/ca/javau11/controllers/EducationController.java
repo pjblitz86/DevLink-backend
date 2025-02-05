@@ -11,12 +11,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.javau11.entities.Education;
 import ca.javau11.services.EducationService;
 
 @RestController
+@RequestMapping("/api")
 public class EducationController {
 
 	private EducationService educationService;
@@ -25,7 +27,7 @@ public class EducationController {
 		this.educationService = educationService;
 	}
 	
-	@GetMapping("/profile/{profileId}/educations")
+	@GetMapping("/profiles/{profileId}/educations")
     public List<Education> getEducationsByProfile(@PathVariable Long profileId) {
         return educationService.getEducationsByProfileId(profileId);
     }
@@ -36,7 +38,7 @@ public class EducationController {
         return ResponseEntity.of(box);
     }
     
-    @PostMapping("/profile/{profileId}/education/add")
+    @PostMapping("/profiles/{profileId}/education/add")
     public ResponseEntity<Education> addEducation(
             @PathVariable Long profileId,
             @RequestBody Education education) {

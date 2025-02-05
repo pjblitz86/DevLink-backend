@@ -10,12 +10,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.javau11.entities.Comment;
 import ca.javau11.services.CommentService;
 
 @RestController
+@RequestMapping("/api/posts")
 public class CommentController {
 
 	private CommentService commentService;
@@ -24,18 +26,18 @@ public class CommentController {
 		this.commentService = commentService;
 	}
 	
-	@GetMapping("post/{postId}/comments")
+	@GetMapping("/{postId}/comments")
     public List<Comment> getCommentsByPost(@PathVariable Long postId) {
         return commentService.getCommentsByPostId(postId);
     }
     
-    @GetMapping("post/comment/{commentId}")
+    @GetMapping("/comment/{commentId}")
     public ResponseEntity<Comment> getComment(@PathVariable Long commentId) {
         Optional<Comment> box = commentService.getCommentById(commentId);
         return ResponseEntity.of(box);
     }
     
-    @PostMapping("post/{postId}/comment")
+    @PostMapping("/{postId}/comment")
     public ResponseEntity<Comment> addComment(
             @PathVariable Long postId,
             @RequestBody Comment comment) {
@@ -45,7 +47,7 @@ public class CommentController {
                 .orElse(ResponseEntity.badRequest().build());
     }
     
-    @PutMapping("post/comment/{id}")
+    @PutMapping("/comment/{id}")
     public ResponseEntity<Comment> updateComment(
             @PathVariable Long id,
             @RequestBody Comment comment) {
@@ -53,7 +55,7 @@ public class CommentController {
         return ResponseEntity.of(updatedComment);
     }
     
-    @DeleteMapping("post/comment/{commentId}")
+    @DeleteMapping("/comment/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable Long commentId) {
         boolean isDeleted = commentService.deleteComment(commentId);
         return isDeleted

@@ -3,7 +3,6 @@ package ca.javau11.controllers;
 import ca.javau11.entities.Job;
 import ca.javau11.entities.User;
 import ca.javau11.services.JobService;
-import ca.javau11.services.UserService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,11 +16,9 @@ import java.util.Optional;
 public class JobController {
 
     private final JobService jobService;
-    private final UserService userService;
 
-    public JobController(JobService jobService, UserService userService) {
+    public JobController(JobService jobService) {
         this.jobService = jobService;
-        this.userService = userService;        
     }
 
     @GetMapping
