@@ -71,6 +71,10 @@ public class User {
 	@JsonIgnoreProperties("likes")
 	private List<Post> likedPosts;
 	
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<Job> jobs;
+	
 	public User() {}
 
 	public User(String name, String email) {
@@ -141,6 +145,14 @@ public class User {
 	public void setLikedPosts(List<Post> likedPosts) {
 		this.likedPosts = likedPosts;
 	}
+	
+	public List<Job> getJobs() {
+        return jobs;
+    }
+
+    public void setJobs(List<Job> jobs) {
+        this.jobs = jobs;
+    }
 
 	@Override
 	public String toString() {

@@ -29,13 +29,13 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/register", "/login", "/profiles/**", "/profile/**", "/api/post/**", "/post/**", "/api/jobs/**", "/jobs/**").permitAll()
+                .requestMatchers("/register", "/login", "/profiles/**", "/profile/**", "/api/post/**", "/post/**", "/api/jobs/**").permitAll()
 //                .anyRequest().permitAll()
 //                .requestMatchers().authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/jobs/**").permitAll()
                 .requestMatchers(HttpMethod.DELETE, "/post/**").hasRole("USER")
-                .requestMatchers(HttpMethod.POST, "/api/jobs").hasRole("USER")
-                .anyRequest().authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/jobs").authenticated()
+//                .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

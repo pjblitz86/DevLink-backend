@@ -1,5 +1,7 @@
 package ca.javau11.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -25,15 +27,21 @@ public class Job {
     })
     private Company company;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false) 
+    @JsonBackReference
+    private User user;
+    
     public Job() {}
 
-    public Job(String title, String type, String description, String location, String salary, Company company) {
+    public Job(String title, String type, String description, String location, String salary, Company company, User user) {
         this.title = title;
         this.type = type;
         this.description = description;
         this.location = location;
         this.salary = salary;
         this.company = company;
+        this.user = user;
     }
 
     // Getters and Setters
@@ -92,6 +100,14 @@ public class Job {
     public void setCompany(Company company) {
         this.company = company;
     }
+    
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     @Override
     public String toString() {
@@ -102,7 +118,8 @@ public class Job {
                 ", description='" + description + '\'' +
                 ", location='" + location + '\'' +
                 ", salary='" + salary + '\'' +
-                ", company=" + company +
+                ", company=" + company + 
+                "user=" + (user != null ? user.getId() : "null") +
                 '}';
     }
 }
