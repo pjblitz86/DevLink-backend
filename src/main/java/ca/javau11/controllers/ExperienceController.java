@@ -23,8 +23,6 @@ import org.slf4j.LoggerFactory;
 @RequestMapping("/api")
 public class ExperienceController {
 	
-	private static final Logger logger = LoggerFactory.getLogger(ExperienceController.class);
-	
 	private ExperienceService experienceService;
 	
 	public ExperienceController(ExperienceService experienceService) {
@@ -52,14 +50,6 @@ public class ExperienceController {
                 .orElse(ResponseEntity.badRequest().build());
     }
 
-    @PutMapping("/experience/{id}")
-    public ResponseEntity<Experience> updateExperience(
-            @PathVariable Long id,
-            @RequestBody Experience experience) {
-        Optional<Experience> updatedExperience = experienceService.updateExperience(id, experience);
-        return ResponseEntity.of(updatedExperience);
-    }
-	
     @DeleteMapping("/experience/{id}")
     public ResponseEntity<Void> deleteExperience(@PathVariable Long id) {
         boolean isDeleted = experienceService.deleteExperience(id);

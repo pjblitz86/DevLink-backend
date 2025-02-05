@@ -1,20 +1,8 @@
 package ca.javau11.controllers;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import java.util.Arrays;
-import java.util.Optional;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ca.javau11.dtos.ProfileDTO;
 import ca.javau11.entities.Profile;
@@ -22,112 +10,168 @@ import ca.javau11.entities.User;
 import ca.javau11.services.ProfileService;
 import ca.javau11.utils.Response;
 
-@WebMvcTest(ProfileController.class)
-public class ProfileControllerTest {
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
-    @Autowired
-    private MockMvc mockMvc;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
-    @MockBean
+import static org.junit.jupiter.api.Assertions.*;
+
+@ExtendWith(MockitoExtension.class)
+class ProfileControllerTest {
+
+    @Mock
     private ProfileService profileService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @InjectMocks
+    private ProfileController profileController;
 
-    @Test
-    public void testGetProfiles() throws Exception {
-        Profile profile1 = new Profile("Company1", "Location1", "Status1", Arrays.asList("Java", "Spring"));
-        Profile profile2 = new Profile("Company2", "Location2", "Status2", Arrays.asList("Python", "Django"));
+    private Profile mockProfile;
+    private ProfileDTO mockProfileDTO;
+    private User mockUser;
 
-        when(profileService.getProfiles()).thenReturn(Arrays.asList(profile1, profile2));
+    @BeforeEach
+    void setUp() {
+        mockUser = new User();
+        mockUser.setId(1L);
+        mockUser.setName("testuser");
 
-        mockMvc.perform(get("/profiles"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].company").value("Company1"))
-                .andExpect(jsonPath("$[1].company").value("Company2"));
+        mockProfile = new Profile();
+        mockProfile.setId(1L);
+        mockProfile.setUser(mockUser);
+        mockProfile.setBio("Test Bio");
+
+        mockProfileDTO = new ProfileDTO();
+        mockProfileDTO.setBio("Updated Bio");
     }
 
     @Test
-    public void testGetProfileByUserId() throws Exception {
-        User user = new User();
-        user.setId(1L);
+    void getProfiles_Success() {
+        Profile profileWithoutUser = new Profile();
+        profileWithoutUser.setId(2L);
+        profileWithoutUser.setUser(null); // This one should be filtered out
 
-        Profile profile = new Profile("Company1", "Location1", "Status1", Arrays.asList("Java", "Spring"));
-        profile.setUser(user);
+        List<Profile> profiles = Arrays.asList(mockProfile, profileWithoutUser);
 
-        when(profileService.getProfileByUserId(1L)).thenReturn(Optional.of(profile));
+        when(profileService.getProfiles()).thenReturn(profiles);
 
-        mockMvc.perform(get("/profile/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.company").value("Company1"));
+        ResponseEntity<?> response = profileController.getProfiles();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        List<Profile> result = (List<Profile>) response.getBody();
+        assertNotNull(result);
+        assertEquals(1, result.size()); // Only profiles with a user should be returned
+        assertEquals(mockProfile.getId(), result.get(0).getId());
     }
 
     @Test
-    public void testCreateProfile() throws Exception {
-        ProfileDTO profileDTO = new ProfileDTO(
-                "Company1",
-                "Location1",
-                "Status1",
-                "Java,Spring",
-                "Experienced developer",
-                "github123",
-                "https://youtube.com",
-                "https://twitter.com",
-                null,
-                "https://linkedin.com",
-                null, 
-                null
-        );
+    void getProfileById_Success() {
+        when(profileService.getProfileById(1L)).thenReturn(Optional.of(mockProfile));
 
-        Profile profile = new Profile("Company1", "Location1", "Status1", Arrays.asList("Java", "Spring"));
-        when(profileService.addProfile(eq(1L), any(ProfileDTO.class))).thenReturn(profile);
+        ResponseEntity<?> response = profileController.getProfileById(1L);
 
-        mockMvc.perform(post("/profile/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(profileDTO)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.message").value("Profile successfully created"))
-                .andExpect(jsonPath("$.data.company").value("Company1"));
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        Response<?> body = (Response<?>) response.getBody();
+        assertNotNull(body);
+        assertEquals("Profile found", body.getMessage());
+        assertEquals(mockProfile, body.getData());
     }
 
     @Test
-    public void testUpdateProfile() throws Exception {
-        ProfileDTO profileDTO = new ProfileDTO(
-                "UpdatedCompany",
-                "UpdatedLocation",
-                "UpdatedStatus",
-                "Java",
-                "Updated bio",
-                "updatedGithub",
-                null,
-                null,
-                null,
-                null,
-                null, 
-                null
-        );
+    void getProfileById_NotFound() {
+        when(profileService.getProfileById(99L)).thenReturn(Optional.empty());
 
-        Profile profile = new Profile("UpdatedCompany", "UpdatedLocation", "UpdatedStatus", Arrays.asList("Java"));
-        when(profileService.updateProfile(eq(1L), any(ProfileDTO.class))).thenReturn(profile);
+        ResponseEntity<?> response = profileController.getProfileById(99L);
 
-        mockMvc.perform(put("/profile/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(profileDTO)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("Profile successfully updated"))
-                .andExpect(jsonPath("$.data.company").value("UpdatedCompany"));
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        Response<?> body = (Response<?>) response.getBody();
+        assertNotNull(body);
+        assertEquals("No profile found with the given ID", body.getMessage());
+        assertNull(body.getData());
     }
 
     @Test
-    public void testDeleteProfile() throws Exception {
+    void getProfileByUserId_Success() {
+        when(profileService.getProfileByUserId(1L)).thenReturn(Optional.of(mockProfile));
+
+        ResponseEntity<?> response = profileController.getProfileByUserId(1L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        Response<?> body = (Response<?>) response.getBody();
+        assertNotNull(body);
+        assertEquals("Profile found", body.getMessage());
+        assertEquals(mockProfile, body.getData());
+    }
+
+    @Test
+    void getProfileByUserId_NotFound() {
+        when(profileService.getProfileByUserId(99L)).thenReturn(Optional.empty());
+
+        ResponseEntity<?> response = profileController.getProfileByUserId(99L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        Response<?> body = (Response<?>) response.getBody();
+        assertNotNull(body);
+        assertEquals("No profile exists for this user", body.getMessage());
+        assertNull(body.getData());
+    }
+
+    @Test
+    void createProfile_Success() {
+        when(profileService.addProfile(eq(1L), any(ProfileDTO.class))).thenReturn(mockProfile);
+
+        ResponseEntity<?> response = profileController.createProfile(1L, mockProfileDTO);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+
+        Response<?> body = (Response<?>) response.getBody();
+        assertNotNull(body);
+        assertEquals("Profile successfully created", body.getMessage());
+        assertEquals(mockProfile, body.getData());
+    }
+
+    @Test
+    void updateProfile_Success() {
+        when(profileService.updateProfile(eq(1L), any(ProfileDTO.class))).thenReturn(mockProfile);
+
+        ResponseEntity<?> response = profileController.updateProfile(1L, mockProfileDTO);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        Response<?> body = (Response<?>) response.getBody();
+        assertNotNull(body);
+        assertEquals("Profile successfully updated", body.getMessage());
+        assertEquals(mockProfile, body.getData());
+    }
+
+    @Test
+    void deleteProfile_Success() {
         when(profileService.deleteProfile(1L)).thenReturn(true);
 
-        mockMvc.perform(delete("/profile/1"))
-                .andExpect(status().isOk());
+        ResponseEntity<Void> response = profileController.deleteProfile(1L);
 
-        when(profileService.deleteProfile(2L)).thenReturn(false);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
 
-        mockMvc.perform(delete("/profile/2"))
-                .andExpect(status().isNotFound());
+    @Test
+    void deleteProfile_NotFound() {
+        when(profileService.deleteProfile(99L)).thenReturn(false);
+
+        ResponseEntity<Void> response = profileController.deleteProfile(99L);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }

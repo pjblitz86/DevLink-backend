@@ -39,40 +39,5 @@ public class CommentService {
             return comment;
         });
 	}
-
-	public Optional<Comment> updateComment(Long id, Comment commentToUpdate) {
-		for (Post post : postRepo.findAll()) {
-            Optional<Comment> commentOptional = post.getComments().stream()
-                    .filter(comment -> comment.getId().equals(id))
-                    .findFirst();
-
-            if (commentOptional.isPresent()) {
-                Comment comment = commentOptional.get();
-                comment.setText(commentToUpdate.getText());
-
-                postRepo.save(post);
-                return Optional.of(comment);
-            }
-        }
-        return Optional.empty();
-	}
-
-	public boolean deleteComment(Long id) {
-		for (Post post : postRepo.findAll()) {
-	        Optional<Comment> commentOptional = post.getComments().stream()
-	                .filter(comment -> comment.getId().equals(id))
-	                .findFirst();
-
-	        if (commentOptional.isPresent()) {
-	            Comment commentToRemove = commentOptional.get();
-	            post.getComments().remove(commentToRemove);
-
-	            postRepo.save(post);
-	            return true;
-	        }
-	    }
-
-	    return false;
-	}
 	
 }

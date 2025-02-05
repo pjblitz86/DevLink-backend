@@ -3,6 +3,7 @@ package ca.javau11.controllers;
 import ca.javau11.entities.Job;
 import ca.javau11.entities.User;
 import ca.javau11.services.JobService;
+import ca.javau11.services.UserService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,9 +17,11 @@ import java.util.Optional;
 public class JobController {
 
     private final JobService jobService;
+    private final UserService userService;
 
-    public JobController(JobService jobService) {
+    public JobController(JobService jobService, UserService userService) {
         this.jobService = jobService;
+        this.userService = userService;
     }
 
     @GetMapping
@@ -34,13 +37,13 @@ public class JobController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    public ResponseEntity<Job> createJob(@RequestBody Job job, @AuthenticationPrincipal User user) {
-        if (user == null) {
-            return ResponseEntity.status(403).body(null);
+    @PostMapping("/user/{userId}")
+    public ResponseEntity<?> createJob(@RequestBody Job job, @RequestParam Long userId) {
+    	Optional<User> user = Optional.ofNullable(userService.getUserById(userId));
+        if (user.isEmpty()) {
+            return ResponseEntity.status(403).body("User not found or unauthorized.");
         }
-        
-        Job createdJob = jobService.createJob(job, user);
+        Job createdJob = jobService.createJob(job, user.get());
         return ResponseEntity.ok(createdJob);
     }
 

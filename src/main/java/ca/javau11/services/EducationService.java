@@ -40,29 +40,6 @@ public class EducationService {
         });
 	}
 
-	public Optional<Education> updateEducation(Long id, Education educationToUpdate) {
-		for (Profile profile : profileRepo.findAll()) {
-            Optional<Education> educationOptional = profile.getEducations().stream()
-                    .filter(edu -> edu.getId().equals(id))
-                    .findFirst();
-
-            if (educationOptional.isPresent()) {
-                Education education = educationOptional.get();
-                education.setSchool(educationToUpdate.getSchool());
-                education.setDegree(educationToUpdate.getDegree());
-                education.setFieldOfStudy(educationToUpdate.getFieldOfStudy());
-                education.setStartDate(educationToUpdate.getStartDate());
-                education.setEndDate(educationToUpdate.getEndDate());
-                education.setCurrent(educationToUpdate.getCurrent());
-                education.setDescription(educationToUpdate.getDescription());
-
-                profileRepo.save(profile);
-                return Optional.of(education);
-            }
-        }
-        return Optional.empty();
-	}
-
 	public boolean deleteEducation(Long id) {
 		for (Profile profile : profileRepo.findAll()) {
 	        Optional<Education> educationOptional = profile.getEducations().stream()
