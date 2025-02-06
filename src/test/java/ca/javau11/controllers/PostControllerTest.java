@@ -1,8 +1,11 @@
 package ca.javau11.controllers;
 
 import ca.javau11.entities.Post;
+import ca.javau11.entities.User;
 import ca.javau11.repositories.PostRepository;
 import ca.javau11.services.PostService;
+import ca.javau11.services.UserService;
+import ca.javau11.service.CustomUserDetails;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,18 +30,26 @@ class PostControllerTest {
     @Mock
     private PostRepository postRepository;
 
+    @Mock
+    private UserService userService;
+
     @InjectMocks
     private PostController postController;
 
     private Post post;
+    private User user;
     private Long userId = 1L;
     private Long postId = 100L;
 
     @BeforeEach
     void setUp() {
+        user = new User();
+        user.setId(userId);
+        user.setName("Test User");
+
         post = new Post();
         post.setId(postId);
-        post.setId(userId);
+        post.setUser(user);
         post.setText("Test post");
         post.setLikes(new ArrayList<>());
     }
@@ -64,11 +75,38 @@ class PostControllerTest {
     }
 
     @Test
-    void testDeletePost_NotFound() {
+    void testDeletePost_Success() {
+        CustomUserDetails authenticatedUser = new CustomUserDetails(
+            user.getId(), user.getName(), user.getPassword()
+        );
+
+        when(postService.deletePost(postId, userId)).thenReturn(true);
+
+        ResponseEntity<String> response = postController.deletePost(postId, authenticatedUser);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Post deleted successfully.", response.getBody());
+    }
+
+    @Test
+    void testDeletePost_NotAuthorized() {
+        CustomUserDetails authenticatedUser = new CustomUserDetails(
+            user.getId(), user.getName(), user.getPassword()
+        );
+
         when(postService.deletePost(postId, userId)).thenReturn(false);
 
-        ResponseEntity<Void> response = postController.deletePost(postId, userId);
+        ResponseEntity<String> response = postController.deletePost(postId, authenticatedUser);
 
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode()); 
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+        assertEquals("You are not authorized to delete this post.", response.getBody());
+    }
+
+    @Test
+    void testDeletePost_Unauthenticated() {
+        ResponseEntity<String> response = postController.deletePost(postId, null);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+        assertEquals("Unauthorized: No authenticated user.", response.getBody());
     }
 }

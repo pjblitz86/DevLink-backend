@@ -37,6 +37,12 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+    	String requestURI = request.getRequestURI();
+    	if (requestURI.equals("/api/register") || requestURI.equals("/api/login")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+    	
         String token = request.getHeader("Authorization");
 
         if (token != null && token.startsWith("Bearer ")) {

@@ -49,20 +49,27 @@ public class PostService {
 	}
 
 	public boolean deletePost(Long postId, Long userId) {
-		Optional<Post> box = postRepo.findById(postId);
-	    if (box.isEmpty()) return false;
-	    
+	    Optional<Post> box = postRepo.findById(postId);
+	    if (box.isEmpty()) {
+	        throw new RuntimeException("Post not found.");
+	    }
+
 	    Post post = box.get();
 	    User authenticatedUser = userRepo.findById(userId)
 	            .orElseThrow(() -> new RuntimeException("User not found"));
 
-	        if (!post.getUser().getId().equals(authenticatedUser.getId())) {
-	            throw new RuntimeException("You do not have permission to delete this post.");
-	        }
-	    
-	    postRepo.delete(post);
-	    return true;
+	    if (!post.getUser().getId().equals(authenticatedUser.getId())) {
+	        throw new RuntimeException("You do not have permission to delete this post.");
+	    }
+
+	    try {
+	        postRepo.delete(post);
+	        return true;
+	    } catch (Exception e) {
+	        throw new RuntimeException("Error occurred while deleting the post.");
+	    }
 	}
+
 	
 	@Transactional
     public boolean likePost(Long userId, Long postId) {

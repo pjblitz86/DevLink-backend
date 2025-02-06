@@ -5,13 +5,15 @@ import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import ca.javau11.entities.User;
+
 public class CustomUserDetails implements UserDetails {
 
 	private static final long serialVersionUID = 1L;
 	private final Long id;
     private final String username;
     private final String password;
-
+    
     public CustomUserDetails(Long id, String username, String password) {
         this.id = id;
         this.username = username;

@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.javau11.entities.Post;
 import ca.javau11.exceptions.PostAlreadyLikedException;
 import ca.javau11.exceptions.PostNotLikedException;
 import ca.javau11.repositories.PostRepository;
+import ca.javau11.service.CustomUserDetails;
 import ca.javau11.services.PostService;
 
 @RestController
@@ -60,13 +60,21 @@ public class PostController {
 	}
     
     @DeleteMapping("/{id}")
-	public ResponseEntity<Void> deletePost(@PathVariable Long postId, @PathVariable Long userId) {
-		logger.info("call to controller");
-		boolean isDeleted = postService.deletePost(postId, userId);
-		return isDeleted? 
-				ResponseEntity.ok().build() 
-				: ResponseEntity.notFound().build();
-	}
+    public ResponseEntity<String> deletePost(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails authenticatedUser) {
+        logger.debug("Deleting post with ID: {} for authenticated user: {}", id, authenticatedUser != null ? authenticatedUser.getId() : "null");
+
+        if (authenticatedUser == null) {
+            return ResponseEntity.status(403).body("Unauthorized: No authenticated user.");
+        }
+
+        boolean deleted = postService.deletePost(id, authenticatedUser.getId());
+        if (deleted) {
+            return ResponseEntity.ok("Post deleted successfully.");
+        } else {
+            return ResponseEntity.status(403).body("You are not authorized to delete this post.");
+        }
+    }
+
     
     @PostMapping("/{postId}/like/{userId}")
     public ResponseEntity<?> likePost(@PathVariable Long userId, @PathVariable Long postId) {
