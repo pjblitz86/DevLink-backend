@@ -2,6 +2,7 @@ package ca.javau11.controllers;
 
 import ca.javau11.entities.Job;
 import ca.javau11.entities.User;
+import ca.javau11.service.CustomUserDetails;
 import ca.javau11.services.JobService;
 import ca.javau11.services.UserService;
 
@@ -51,25 +52,27 @@ public class JobController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Job> updateJob(@PathVariable Long id, @RequestBody Job job, @AuthenticationPrincipal User authenticatedUser) {
-    	logger.debug("Deleting job with ID: {} for authenticated user: {}", id, authenticatedUser != null ? authenticatedUser.getId() : "null");
-    	if (authenticatedUser == null) {
+    public ResponseEntity<Job> updateJob(@PathVariable Long id, @RequestBody Job job, @AuthenticationPrincipal CustomUserDetails authenticatedUser) {
+        logger.debug("Updating job with ID: {} for authenticated user: {}", id, authenticatedUser != null ? authenticatedUser.getId() : "null");
+
+        if (authenticatedUser == null) {
             return ResponseEntity.status(403).body(null);
         }
 
-        Optional<Job> updatedJob = jobService.updateJob(id, job, authenticatedUser);
+        Optional<Job> updatedJob = jobService.updateJob(id, job, userService.getUserById(authenticatedUser.getId()));
         return updatedJob.map(ResponseEntity::ok).orElse(ResponseEntity.status(403).build());
     }
 
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteJob(@PathVariable Long id, @AuthenticationPrincipal User authenticatedUser) {
+    public ResponseEntity<String> deleteJob(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails authenticatedUser) {
         logger.debug("Deleting job with ID: {} for authenticated user: {}", id, authenticatedUser != null ? authenticatedUser.getId() : "null");
 
         if (authenticatedUser == null) {
             return ResponseEntity.status(403).body("Unauthorized: No authenticated user.");
         }
 
-        boolean deleted = jobService.deleteJob(id, authenticatedUser);
+        boolean deleted = jobService.deleteJob(id, userService.getUserById(authenticatedUser.getId()));
         if (deleted) {
             return ResponseEntity.ok("Job deleted successfully.");
         } else {

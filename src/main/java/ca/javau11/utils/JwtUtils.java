@@ -26,11 +26,13 @@ public class JwtUtils {
     public String generateToken(User existingUser) {
         return Jwts.builder()
                 .setSubject(existingUser.getEmail())
+                .claim("id", existingUser.getId())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(secretKey)
                 .compact();
     }
+
 
     public String extractUsername(String token) {
         return Jwts.parserBuilder()
@@ -40,6 +42,16 @@ public class JwtUtils {
                 .getBody()
                 .getSubject();
     }
+    
+    public Long extractUserId(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("id", Long.class);
+    }
+
 
     public boolean isTokenExpired(String token) {
         return Jwts.parserBuilder()
