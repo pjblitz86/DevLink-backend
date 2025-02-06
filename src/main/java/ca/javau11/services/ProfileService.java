@@ -38,7 +38,6 @@ public class ProfileService {
 	}
 	
 	public Profile addProfile(Long userId, ProfileDTO profileDTO) {
-        // Check required fields
         validateProfileDTO(profileDTO);
 
         Optional<Profile> existingProfile = profileRepo.findByUserId(userId);
@@ -91,7 +90,7 @@ public class ProfileService {
         profile.setWebsite(profileDTO.getWebsite());
         profile.setLocation(profileDTO.getLocation());
         profile.setStatus(profileDTO.getStatus());
-        profile.setSkills(profileDTO.getSkillsAsList()); // Convert skills to List<String>
+        profile.setSkills(profileDTO.getSkillsAsList());
         profile.setBio(profileDTO.getBio());
         profile.setGithubusername(profileDTO.getGithubusername());
         profile.setYoutube(profileDTO.getYoutube());

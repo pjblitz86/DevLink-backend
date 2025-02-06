@@ -32,8 +32,6 @@ public class PostService {
 
 	public Post addPost(Long userId, Post post) {
 		User user = userRepo.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        // TODO: add exception handling in separate files
-        
         post.setUser(user);
         return postRepo.save(post);
 	}
@@ -80,7 +78,7 @@ public class PostService {
             postRepo.save(post);
             return true;
         }
-        return false; // Already liked
+        return false;
     }
 
     @Transactional
@@ -97,7 +95,7 @@ public class PostService {
             postRepo.save(post);
             return true;
         }
-        return false; // Not liked
+        return false;
     }
 	
 }
