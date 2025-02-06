@@ -60,7 +60,7 @@ public class PostController {
 	}
     
     @DeleteMapping("/{id}")
-	public ResponseEntity<Void> deletePost(@PathVariable Long postId, @RequestParam Long userId) {
+	public ResponseEntity<Void> deletePost(@PathVariable Long postId, @PathVariable Long userId) {
 		logger.info("call to controller");
 		boolean isDeleted = postService.deletePost(postId, userId);
 		return isDeleted? 

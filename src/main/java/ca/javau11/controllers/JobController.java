@@ -5,6 +5,8 @@ import ca.javau11.entities.User;
 import ca.javau11.services.JobService;
 import ca.javau11.services.UserService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import java.util.Optional;
 @RequestMapping("/api/jobs")
 public class JobController {
 
+	private static final Logger logger = LoggerFactory.getLogger(JobController.class);
     private final JobService jobService;
     private final UserService userService;
 
@@ -38,7 +41,7 @@ public class JobController {
     }
 
     @PostMapping("/user/{userId}")
-    public ResponseEntity<?> createJob(@RequestBody Job job, @RequestParam Long userId) {
+    public ResponseEntity<?> createJob(@RequestBody Job job, @PathVariable Long userId) {
     	Optional<User> user = Optional.ofNullable(userService.getUserById(userId));
         if (user.isEmpty()) {
             return ResponseEntity.status(403).body("User not found or unauthorized.");
@@ -48,26 +51,30 @@ public class JobController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Job> updateJob(@PathVariable Long id, @RequestBody Job job, @AuthenticationPrincipal User user) {
-        if (user == null) {
+    public ResponseEntity<Job> updateJob(@PathVariable Long id, @RequestBody Job job, @AuthenticationPrincipal User authenticatedUser) {
+    	logger.debug("Deleting job with ID: {} for authenticated user: {}", id, authenticatedUser != null ? authenticatedUser.getId() : "null");
+    	if (authenticatedUser == null) {
             return ResponseEntity.status(403).body(null);
         }
 
-        Optional<Job> updatedJob = jobService.updateJob(id, job, user);
+        Optional<Job> updatedJob = jobService.updateJob(id, job, authenticatedUser);
         return updatedJob.map(ResponseEntity::ok).orElse(ResponseEntity.status(403).build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteJob(@PathVariable Long id, @AuthenticationPrincipal User user) {
-        if (user == null) {
-            return ResponseEntity.status(403).body("Unauthorized");
+    public ResponseEntity<String> deleteJob(@PathVariable Long id, @AuthenticationPrincipal User authenticatedUser) {
+        logger.debug("Deleting job with ID: {} for authenticated user: {}", id, authenticatedUser != null ? authenticatedUser.getId() : "null");
+
+        if (authenticatedUser == null) {
+            return ResponseEntity.status(403).body("Unauthorized: No authenticated user.");
         }
 
-        boolean deleted = jobService.deleteJob(id, user);
+        boolean deleted = jobService.deleteJob(id, authenticatedUser);
         if (deleted) {
             return ResponseEntity.ok("Job deleted successfully.");
         } else {
             return ResponseEntity.status(403).body("You are not authorized to delete this job.");
         }
     }
+
 }

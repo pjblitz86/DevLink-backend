@@ -53,12 +53,15 @@ public class JobService {
 
         if (jobOptional.isPresent()) {
             Job job = jobOptional.get();
+
             if (job.getUser().getId().equals(user.getId())) {
+                user.getJobs().remove(job);
                 jobRepository.deleteById(id);
                 return true;
             }
         }
-
         return false;
     }
+
+
 }
