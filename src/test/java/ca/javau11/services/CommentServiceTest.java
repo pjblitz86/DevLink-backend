@@ -45,8 +45,6 @@ class CommentServiceTest {
         comment.setPost(post);
 
         post.getComments().add(comment);
-
-        // Use lenient() to avoid UnnecessaryStubbingException
         lenient().when(postRepo.findById(postId)).thenReturn(Optional.of(post));
     }
 

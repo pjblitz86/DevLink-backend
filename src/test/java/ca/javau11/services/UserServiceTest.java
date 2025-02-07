@@ -46,8 +46,6 @@ class UserServiceTest {
         testUser.setPassword("password123");
     }
 
-    // ------------------- LOGIN USER TESTS -------------------
-
     @Test
     void loginUser_SuccessfulLogin() {
         when(userRepo.findByEmail(testUser.getEmail())).thenReturn(Optional.of(testUser));
@@ -79,9 +77,6 @@ class UserServiceTest {
         assertEquals("Invalid email or password", exception.getMessage());
     }
 
-
-    // ------------------- GET USER BY ID TESTS -------------------
-
     @Test
     void getUserById_UserExists_ShouldReturnUser() {
         when(userRepo.findById(1L)).thenReturn(Optional.of(testUser));
@@ -100,8 +95,6 @@ class UserServiceTest {
         UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> userService.getUserById(1L));
         assertEquals("User not found with id: 1", exception.getMessage());
     }
-
-    // ------------------- DELETE USER TESTS -------------------
 
     @Test
     void deleteUserById_UserExists_ShouldReturnTrue() {

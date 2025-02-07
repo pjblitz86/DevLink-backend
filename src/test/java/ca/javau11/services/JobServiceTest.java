@@ -37,7 +37,7 @@ class JobServiceTest {
         user = new User();
         user.setId(userId);
         user.setName("Test User");
-        user.setJobs(new ArrayList<>());  // Ensure user's job list is initialized
+        user.setJobs(new ArrayList<>());
 
         job = new Job();
         job.setId(jobId);
@@ -48,11 +48,9 @@ class JobServiceTest {
         job.setSalary("$80,000");
         job.setDescription("This is a test job listing.");
 
-        // Add job to user's job list
         user.getJobs().add(job);
     }
 
-    // ✅ Test retrieving all jobs with and without a limit
     @Test
     void testGetAllJobs() {
         List<Job> jobs = List.of(job);
@@ -67,7 +65,6 @@ class JobServiceTest {
         verify(jobRepository, times(2)).findAll();
     }
 
-    // ✅ Test retrieving a job by ID
     @Test
     void testGetJobById_Found() {
         when(jobRepository.findById(jobId)).thenReturn(Optional.of(job));
@@ -89,7 +86,6 @@ class JobServiceTest {
         verify(jobRepository, times(1)).findById(jobId);
     }
 
-    // ✅ Test creating a new job
     @Test
     void testCreateJob_Success() {
         when(jobRepository.save(any(Job.class))).thenReturn(job);
@@ -101,7 +97,6 @@ class JobServiceTest {
         verify(jobRepository, times(1)).save(any(Job.class));
     }
 
-    // ✅ Test updating an existing job
     @Test
     void testUpdateJob_Success() {
     	Company updatedCompany = new Company();
@@ -144,7 +139,6 @@ class JobServiceTest {
         verify(jobRepository, never()).save(any(Job.class));
     }
 
-    // ✅ Test deleting a job
     @Test
     void testDeleteJob_Success() {
         when(jobRepository.findById(jobId)).thenReturn(Optional.of(job));
@@ -152,8 +146,6 @@ class JobServiceTest {
 
         boolean isDeleted = jobService.deleteJob(jobId, user);
         assertTrue(isDeleted, "Job should be deleted successfully");
-
-        // Ensure job was removed from user's jobs list
         assertFalse(user.getJobs().contains(job), "Job should be removed from user’s job list");
 
         verify(jobRepository, times(1)).findById(jobId);
@@ -181,7 +173,6 @@ class JobServiceTest {
         boolean isDeleted = jobService.deleteJob(jobId, anotherUser);
         assertFalse(isDeleted, "Job deletion should fail as user is unauthorized");
 
-        // Ensure job was not removed from user's job list
         assertTrue(user.getJobs().contains(job), "Job should still exist in the owner's job list");
 
         verify(jobRepository, times(1)).findById(jobId);

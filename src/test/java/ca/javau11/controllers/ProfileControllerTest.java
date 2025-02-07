@@ -57,7 +57,7 @@ class ProfileControllerTest {
     void getProfiles_Success() {
         Profile profileWithoutUser = new Profile();
         profileWithoutUser.setId(2L);
-        profileWithoutUser.setUser(null); // This one should be filtered out
+        profileWithoutUser.setUser(null);
 
         List<Profile> profiles = Arrays.asList(mockProfile, profileWithoutUser);
 
@@ -69,7 +69,7 @@ class ProfileControllerTest {
 
         List<Profile> result = (List<Profile>) response.getBody();
         assertNotNull(result);
-        assertEquals(1, result.size()); // Only profiles with a user should be returned
+        assertEquals(1, result.size());
         assertEquals(mockProfile.getId(), result.get(0).getId());
     }
 
