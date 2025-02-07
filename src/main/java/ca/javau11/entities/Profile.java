@@ -61,7 +61,6 @@ public class Profile {
 		this.skills = skills;
 	}
 
-	// is this correct?
 	public void addUser(User user) {
 		user.setId(user.getId());
 	}

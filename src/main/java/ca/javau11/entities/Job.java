@@ -44,7 +44,6 @@ public class Job {
         this.user = user;
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }

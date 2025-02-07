@@ -18,7 +18,6 @@ public class Company {
         this.contactPhone = contactPhone;
     }
 
-    // Getters and Setters
     public String getName() {
         return name;
     }

@@ -5,8 +5,6 @@ import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import ca.javau11.entities.User;
-
 public class CustomUserDetails implements UserDetails {
 
 	private static final long serialVersionUID = 1L;
@@ -48,7 +46,6 @@ public class CustomUserDetails implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }
