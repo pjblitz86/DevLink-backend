@@ -39,7 +39,7 @@ public class Post {
 	private String name;
 	private String avatar;
 	
-	@ManyToMany(mappedBy = "likedPosts")
+	@ManyToMany(mappedBy = "likedPosts", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JsonIgnoreProperties("likedPosts")
 	private List<User> likes;
 	

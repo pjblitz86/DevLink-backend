@@ -48,13 +48,14 @@ public class PostService {
 		return Optional.empty();
 	}
 
+	@Transactional
 	public boolean deletePost(Long postId, Long userId) {
-	    Optional<Post> box = postRepo.findById(postId);
-	    if (box.isEmpty()) {
+	    Optional<Post> optionalPost = postRepo.findById(postId);
+	    if (optionalPost.isEmpty()) {
 	        throw new RuntimeException("Post not found.");
 	    }
 
-	    Post post = box.get();
+	    Post post = optionalPost.get();
 	    User authenticatedUser = userRepo.findById(userId)
 	            .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -63,10 +64,13 @@ public class PostService {
 	    }
 
 	    try {
+	        postRepo.deleteLikesByPostId(postId);
 	        postRepo.delete(post);
+	        postRepo.flush();
+
 	        return true;
 	    } catch (Exception e) {
-	        throw new RuntimeException("Error occurred while deleting the post.");
+	        throw new RuntimeException("Error occurred while deleting the post: " + e.getMessage(), e);
 	    }
 	}
 
