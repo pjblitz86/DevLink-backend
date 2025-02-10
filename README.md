@@ -11,27 +11,6 @@ The backend manages user authentication, profiles, posts, comments, jobs, and mo
 
 ---
 
-## 🚀 Features
-- **User Authentication & Authorization** (JWT-based)
-- **Profile Management** (CRUD operations for user profiles)
-- **Posts & Comments** (Users can create, edit, delete posts & comments)
-- **Jobs** (Create and find jobs)
-- **Database Management** (Using JPA & MySQL)
-- **Swagger API Documentation** (For easy API testing)
-
----
-
-## 🏗 Tech Stack
-- **Language:** Java 17+
-- **Framework:** Spring Boot
-- **Database:** MySQL
-- **ORM:** JPA/Hibernate
-- **Authentication:** JWT (JSON Web Token)
-- **API Documentation:** Swagger
-- **Build Tool:** Maven
-
----
-
 ## 🔧 Installation & Setup
 
 ### **Prerequisites**
@@ -69,6 +48,27 @@ Ensure you have the following installed on your machine:
 
 ---
 
+## 🚀 Features
+- **User Authentication & Authorization** (JWT-based)
+- **Profile Management** (CRUD operations for user profiles)
+- **Posts & Comments** (Users can create, edit, delete posts & comments)
+- **Jobs** (Create and find jobs)
+- **Database Management** (Using JPA & MySQL)
+- **Swagger API Documentation** (For easy API testing)
+
+---
+
+## 🏗 Tech Stack
+- **Language:** Java 17+
+- **Framework:** Spring Boot
+- **Database:** MySQL
+- **ORM:** JPA/Hibernate
+- **Authentication:** JWT (JSON Web Token)
+- **API Documentation:** Swagger
+- **Build Tool:** Maven
+
+---
+
 ## 📌 API Endpoints
 Here are some key API endpoints:
 
@@ -82,31 +82,25 @@ Here are some key API endpoints:
 | Method | Endpoint         | Description           |
 |--------|-----------------|-----------------------|
 | GET    | `/user/{id}`   | Get user by ID       |
-| DELETE | `/users/{id}`   | Delete user account  |
+| DELETE | `/user/{id}`   | Delete user account  |
 
 ### **Profiles**
 | Method | Endpoint          | Description           |
 |--------|------------------|-----------------------|
-| Get   | `/api/profiles`     | Create a new post     |
-| GET    | `/posts`        | Get all posts         |
-| GET    | `/posts/{id}`   | Get post by ID        |
-| DELETE | `/posts/{id}`   | Delete a post         |
-| POST   | `/posts/{id}/comments` | Add a comment to a post |
+| GET    | `/api/profiles`     | Get all profiles     |
+| GET    | `/api/profiles/{profileId}` | Get profile by Profile id |
+| GET    | `/api/profiles/user/{userId}`   | Get profile by User id        |
+| POST   | `/api/profiles/user/{userId}`   | Create a profile for User         |
+| PUT    | `/api/profiles/user/{userId}` | Update a profile |
+| DELETE | `/api/profiles/{profileId}` | Delete a profile by profile id |
 
-### **Posts & Comments**
+### **Posts**
 | Method | Endpoint          | Description           |
 |--------|------------------|-----------------------|
-| POST   | `/posts`        | Create a new post     |
-| GET    | `/posts`        | Get all posts         |
-| GET    | `/posts/{id}`   | Get post by ID        |
-| DELETE | `/posts/{id}`   | Delete a post         |
-| POST   | `/posts/{id}/comments` | Add a comment to a post |
-
-### **Messaging System**
-| Method | Endpoint         | Description           |
-|--------|-----------------|-----------------------|
-| POST   | `/messages/send` | Send a message       |
-| GET    | `/messages/{id}` | Get message by ID    |
+| GET    | `/api/posts`        | Get all posts     |
+| GET    | `/api/posts/{id}`    | Get single Post by id |
+| POST   | `/api/posts//user/{userId}`   | Create a post for User |
+| DELETE | `/api/posts/{id}/`   | Delete a post         |
 
 _For a full list of endpoints, refer to the Swagger documentation._
 
