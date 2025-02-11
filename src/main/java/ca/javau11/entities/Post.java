@@ -2,6 +2,7 @@ package ca.javau11.entities;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -41,7 +42,7 @@ public class Post {
 	
 	@ManyToMany(mappedBy = "likedPosts", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JsonIgnoreProperties("likedPosts")
-	private List<User> likes;
+	private List<User> likes = new ArrayList<>();
 	
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime date = LocalDateTime.now();
