@@ -38,17 +38,12 @@ public class JwtFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
     	String requestURI = request.getRequestURI();
-    	if (requestURI.equals("/api/register") || requestURI.equals("/api/login") || 
-    		    requestURI.startsWith("/api/profiles") || requestURI.startsWith("/api/jobs")) {
+    	if (requestURI.equals("/api/register") || requestURI.equals("/api/login")) {
     		    filterChain.doFilter(request, response);
     		    return;
     		}
     	
         String token = request.getHeader("Authorization");
-        if (token == null || !token.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
         
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
