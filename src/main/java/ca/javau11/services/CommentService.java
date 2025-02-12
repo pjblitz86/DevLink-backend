@@ -7,15 +7,18 @@ import org.springframework.stereotype.Service;
 
 import ca.javau11.entities.Comment;
 import ca.javau11.entities.Post;
+import ca.javau11.repositories.CommentRepository;
 import ca.javau11.repositories.PostRepository;
 
 @Service
 public class CommentService {
 
 	private PostRepository postRepo;
+	private CommentRepository commentRepo;
 
-	public CommentService(PostRepository postRepo) {
+	public CommentService(PostRepository postRepo, CommentRepository commentRepo) {
 		this.postRepo = postRepo;
+		this.commentRepo = commentRepo;
 	}
 
 	public List<Comment> getCommentsByPostId(Long postId) {
@@ -40,4 +43,13 @@ public class CommentService {
         });
 	}
 	
+	public boolean deleteCommentById(Long commentId) {
+        Optional<Comment> commentBox = commentRepo.findById(commentId);
+
+        if (commentBox.isPresent()) {
+            commentRepo.deleteById(commentId);
+            return true;
+        }
+        return false;
+    }
 }
