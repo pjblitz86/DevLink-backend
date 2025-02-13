@@ -72,8 +72,6 @@ public class UserController {
 	        @AuthenticationPrincipal CustomUserDetails authenticatedUser,
 	        HttpServletRequest request) {
 
-	                 authenticatedUser != null ? authenticatedUser.getId() : "null", userId);
-
 	    if (authenticatedUser == null) {
 	        return ResponseEntity.status(403).body(new Response<>("Unauthorized: User is not logged in", null));
 	    }
