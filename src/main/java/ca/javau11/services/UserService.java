@@ -75,6 +75,10 @@ public class UserService {
         	throw new UserNotFoundException("User not found with id: " + id);
         }
     }
+    
+    public User saveUser(User user) {
+        return userRepo.save(user);
+    }
 
 	public boolean deleteUserById(Long id) {
 		Optional<User> box = userRepo.findById(id);
