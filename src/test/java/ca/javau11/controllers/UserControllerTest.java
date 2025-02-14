@@ -3,7 +3,6 @@ package ca.javau11.controllers;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-import ca.javau11.config.GithubProperties;
 import ca.javau11.entities.User;
 import ca.javau11.services.UserService;
 import ca.javau11.utils.Response;
@@ -24,9 +23,6 @@ class UserControllerTest {
 
     @Mock
     private UserService userService;
-
-    @Mock
-    private GithubProperties githubProperties;
 
     @Mock
     private RestTemplate restTemplate;
