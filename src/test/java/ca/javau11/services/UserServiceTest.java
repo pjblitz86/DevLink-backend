@@ -63,9 +63,13 @@ class UserServiceTest {
     void loginUser_UserNotFound_ShouldThrowException() {
         when(userRepo.findByEmail(testUser.getEmail())).thenReturn(Optional.empty());
 
-        AuthenticationException exception = assertThrows(AuthenticationException.class, () -> userService.loginUser(testUser));
-        assertEquals("User empty" + testUser.getEmail(), exception.getMessage());
+        AuthenticationException exception = assertThrows(AuthenticationException.class, () -> {
+            userService.loginUser(testUser);
+        });
+
+        assertEquals("User email is required" + testUser.getEmail(), exception.getMessage());
     }
+
 
     @Test
     void loginUser_IncorrectPassword_ShouldThrowException() {

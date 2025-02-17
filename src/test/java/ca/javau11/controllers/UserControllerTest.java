@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import ca.javau11.entities.User;
+import ca.javau11.service.CustomUserDetails;
 import ca.javau11.services.UserService;
 import ca.javau11.utils.Response;
 
@@ -77,10 +78,59 @@ class UserControllerTest {
 
     @Test
     void deleteUser_Success() {
+        CustomUserDetails authenticatedUser = mock(CustomUserDetails.class);
+        when(authenticatedUser.getId()).thenReturn(1L);
         when(userService.deleteUserById(1L)).thenReturn(true);
 
-        boolean result = userController.deleteUser(1L);
+        ResponseEntity<?> result = userController.deleteUser(1L, authenticatedUser);
 
-        assertTrue(result);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertNotNull(result.getBody());
+
+        Response<?> responseBody = (Response<?>) result.getBody();
+        assertNotNull(responseBody);
+        assertEquals("User deleted successfully", responseBody.getMessage());
+
+        verify(userService, times(1)).deleteUserById(1L);
     }
+
+
+
+    @Test
+    void deleteUser_Failure() {
+        CustomUserDetails authenticatedUser = mock(CustomUserDetails.class);
+        when(authenticatedUser.getId()).thenReturn(1L);
+        when(userService.deleteUserById(1L)).thenReturn(false); // Simulating failure
+
+        ResponseEntity<?> result = userController.deleteUser(1L, authenticatedUser);
+
+        assertEquals(HttpStatus.FORBIDDEN, result.getStatusCode());
+        assertNotNull(result.getBody());
+
+        Response<?> responseBody = (Response<?>) result.getBody();
+        assertNotNull(responseBody);
+        assertEquals("Failed to delete user", responseBody.getMessage());
+
+        verify(userService, times(1)).deleteUserById(1L);
+    }
+
+
+
+    @Test
+    void deleteUser_Unauthorized() {
+        CustomUserDetails anotherUser = mock(CustomUserDetails.class);
+        when(anotherUser.getId()).thenReturn(2L); // Different user ID
+
+        ResponseEntity<?> result = userController.deleteUser(1L, anotherUser);
+
+        assertEquals(HttpStatus.FORBIDDEN, result.getStatusCode());
+        assertNotNull(result.getBody());
+
+        Response<?> responseBody = (Response<?>) result.getBody();
+        assertNotNull(responseBody);
+        assertEquals("Unauthorized: Cannot delete another user's account", responseBody.getMessage());
+
+        verify(userService, times(0)).deleteUserById(anyLong()); // Should not attempt deletion
+    }
+
 }

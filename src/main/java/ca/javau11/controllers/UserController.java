@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import ca.javau11.entities.User;
 import ca.javau11.service.CustomUserDetails;
+import ca.javau11.services.ProfileService;
 import ca.javau11.services.UserService;
 import ca.javau11.utils.Response;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,9 +32,11 @@ public class UserController {
 
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 	private UserService userService;
+	private ProfileService profileService;
 	
-	public UserController(UserService userService) {
+	public UserController(UserService userService, ProfileService profileService) {
 		this.userService = userService;
+		this.profileService = profileService;
 	}
 	
 	@PostMapping(value = "/register", consumes = "application/json", produces = "application/json")
@@ -106,8 +109,26 @@ public class UserController {
 	}
 
 	@DeleteMapping("/user/{id}")
-    public boolean deleteUser(@PathVariable Long id) {
-        return userService.deleteUserById(id);
-    }
+	public ResponseEntity<?> deleteUser(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails authenticatedUser) {
+	    if (authenticatedUser == null) {
+	        return ResponseEntity.status(403).body(new Response<>("Unauthorized: User not logged in", null));
+	    }
+
+	    if (!authenticatedUser.getId().equals(id)) {
+	        return ResponseEntity.status(403).body(new Response<>("Unauthorized: Cannot delete another user's account", null));
+	    }
+
+	    try {
+	        boolean userDeleted = userService.deleteUserById(id);
+	        if (!userDeleted) {
+	            return ResponseEntity.status(403).body(new Response<>("Failed to delete user", null));
+	        }
+
+	        return ResponseEntity.ok(new Response<>("User deleted successfully", true));
+
+	    } catch (Exception e) {
+	        return ResponseEntity.status(500).body(new Response<>("Error deleting user: " + e.getMessage(), null));
+	    }
+	}
 	
 }
