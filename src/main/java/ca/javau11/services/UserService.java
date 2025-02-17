@@ -57,7 +57,7 @@ public class UserService {
     public Response<User> loginUser(User user) {
         Optional<User> optionalUser = userRepo.findByEmail(user.getEmail());
         if (optionalUser.isEmpty()) {
-            throw new AuthenticationException("User empty" + user.getEmail());
+            throw new AuthenticationException("User email is required" + user.getEmail());
         }
         User existingUser = optionalUser.get();
         if (!passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
