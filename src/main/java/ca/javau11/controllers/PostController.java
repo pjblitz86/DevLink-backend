@@ -63,16 +63,13 @@ public class PostController {
     public ResponseEntity<String> deletePost(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails authenticatedUser) {
         logger.debug("Deleting post with ID: {} for authenticated user: {}", id, authenticatedUser != null ? authenticatedUser.getId() : "null");
 
-        if (authenticatedUser == null) {
+        if (authenticatedUser == null)
             return ResponseEntity.status(403).body("Unauthorized: No authenticated user.");
-        }
 
         boolean deleted = postService.deletePost(id, authenticatedUser.getId());
-        if (deleted) {
-            return ResponseEntity.ok("Post deleted successfully.");
-        } else {
-            return ResponseEntity.status(403).body("You are not authorized to delete this post.");
-        }
+        return deleted 
+        	    ? ResponseEntity.ok("Post deleted successfully.") 
+        	    : ResponseEntity.status(403).body("You are not authorized to delete this post.");
     }
 
     

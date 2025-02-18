@@ -43,19 +43,18 @@ public class ProfileController {
 	public ResponseEntity<?> getProfileById(@PathVariable Long profileId) {
 	    Optional<Profile> profile = profileService.getProfileById(profileId);
 
-	    if (profile.isEmpty()) {
+	    if (profile.isEmpty())
 	        return ResponseEntity.ok(new Response<>("No profile found with the given ID", null));
-	    }
-	    
+
 	    return ResponseEntity.ok(new Response<>("Profile found", profile.get()));
 	}
 	
 	@GetMapping("/user/{userId}")
 	public ResponseEntity<?> getProfileByUserId(@PathVariable Long userId) {
 	    Optional<Profile> box = profileService.getProfileByUserId(userId);
-	    if (box.isEmpty()) {
+	    if (box.isEmpty())
 	    	return ResponseEntity.ok(new Response<>("No profile exists for this user", null));
-	    }
+	    
 	    return ResponseEntity.ok(new Response<>("Profile found", box.get()));
 	}
 	
@@ -78,9 +77,9 @@ public class ProfileController {
 	@DeleteMapping("/{profileId}")
 	public ResponseEntity<Void> deleteProfile(@PathVariable Long profileId) {
 		boolean isDeleted = profileService.deleteProfile(profileId);
-		return isDeleted? 
-				ResponseEntity.ok().build() 
-				: ResponseEntity.notFound().build();
+		return isDeleted
+			   ? ResponseEntity.ok().build() 
+			   : ResponseEntity.notFound().build();
 	}
 	
 }

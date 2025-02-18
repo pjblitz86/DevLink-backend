@@ -33,9 +33,8 @@ public class JobService {
 
     public Optional<Job> updateJob(Long id, Job updatedJob, User user) {
         return jobRepository.findById(id).map(existingJob -> {
-            if (!existingJob.getUser().getId().equals(user.getId())) {
+            if (!existingJob.getUser().getId().equals(user.getId()))
                 return null;
-            }
 
             existingJob.setTitle(updatedJob.getTitle());
             existingJob.setType(updatedJob.getType());
@@ -62,6 +61,5 @@ public class JobService {
         }
         return false;
     }
-
 
 }

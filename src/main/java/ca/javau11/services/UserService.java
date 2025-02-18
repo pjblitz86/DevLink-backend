@@ -33,20 +33,9 @@ public class UserService {
     }
 
     public Response<User> addUser(User user) {
-        if (user.getName() == null || user.getName().isEmpty()) {
-            return new Response<>("Name is required");
-        }
-        if (user.getEmail() == null || user.getEmail().isEmpty()) {
-            return new Response<>("Email is required");
-        }
-        if (user.getPassword() == null || user.getPassword().isEmpty()) {
-            return new Response<>("Password is required");
-        }
-
         Optional<User> existingUser = userRepo.findByEmail(user.getEmail());
-        if (existingUser.isPresent()) {
+        if (existingUser.isPresent())
             throw new DuplicateEmailException("Email is already in use");
-        }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         User savedUser = userRepo.save(user);
@@ -56,24 +45,20 @@ public class UserService {
 
     public Response<User> loginUser(User user) {
         Optional<User> optionalUser = userRepo.findByEmail(user.getEmail());
-        if (optionalUser.isEmpty()) {
-            throw new AuthenticationException("User email is required" + user.getEmail());
-        }
-        User existingUser = optionalUser.get();
-        if (!passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
+        if (optionalUser.isEmpty())
             throw new AuthenticationException("Invalid email or password");
-        }
+        
+        User existingUser = optionalUser.get();
+        if (!passwordEncoder.matches(user.getPassword(), existingUser.getPassword()))
+            throw new AuthenticationException("Invalid email or password");
+        
         String jwtToken = jwtUtils.generateToken(existingUser);
         return new Response<>("Login successful", existingUser, jwtToken);
     }
 
     public User getUserById(Long id) {
         Optional<User> user = userRepo.findById(id);
-        if (user.isPresent()) {
-            return user.get();
-        } else {
-        	throw new UserNotFoundException("User not found with id: " + id);
-        }
+        return user.orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
     }
     
     public User saveUser(User user) {

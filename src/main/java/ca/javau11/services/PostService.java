@@ -51,17 +51,15 @@ public class PostService {
 	@Transactional
 	public boolean deletePost(Long postId, Long userId) {
 	    Optional<Post> optionalPost = postRepo.findById(postId);
-	    if (optionalPost.isEmpty()) {
+	    if (optionalPost.isEmpty())
 	        throw new RuntimeException("Post not found.");
-	    }
 
 	    Post post = optionalPost.get();
 	    User authenticatedUser = userRepo.findById(userId)
 	            .orElseThrow(() -> new RuntimeException("User not found"));
 
-	    if (!post.getUser().getId().equals(authenticatedUser.getId())) {
+	    if (!post.getUser().getId().equals(authenticatedUser.getId()))
 	        throw new RuntimeException("You do not have permission to delete this post.");
-	    }
 
 	    try {
 	        postRepo.deleteLikesByPostId(postId);

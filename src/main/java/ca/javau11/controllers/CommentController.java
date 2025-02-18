@@ -59,15 +59,13 @@ public class CommentController {
         logger.debug("Deleting comment with ID: {} for authenticated user: {}", commentId,
                 authenticatedUser != null ? authenticatedUser.getUsername() : "null");
 
-        if (authenticatedUser == null) {
+        if (authenticatedUser == null)
             return ResponseEntity.status(403).body("Unauthorized: No authenticated user.");
-        }
 
         boolean deleted = commentService.deleteCommentById(commentId);
-        if (deleted) {
-            return ResponseEntity.ok("Comment deleted successfully.");
-        } else {
-            return ResponseEntity.status(403).body("You are not authorized to delete this comment.");
-        }
+        return deleted 
+        	    ? ResponseEntity.ok("Comment deleted successfully.") 
+        	    : ResponseEntity.status(403).body("You are not authorized to delete this comment.");
+
     }
 }

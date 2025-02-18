@@ -44,9 +44,9 @@ public class JobController {
     @PostMapping("/user/{userId}")
     public ResponseEntity<?> createJob(@RequestBody Job job, @PathVariable Long userId) {
     	Optional<User> user = Optional.ofNullable(userService.getUserById(userId));
-        if (user.isEmpty()) {
+        if (user.isEmpty())
             return ResponseEntity.status(403).body("User not found or unauthorized.");
-        }
+        
         Job createdJob = jobService.createJob(job, user.get());
         return ResponseEntity.ok(createdJob);
     }
@@ -55,9 +55,8 @@ public class JobController {
     public ResponseEntity<Job> updateJob(@PathVariable Long id, @RequestBody Job job, @AuthenticationPrincipal CustomUserDetails authenticatedUser) {
         logger.debug("Updating job with ID: {} for authenticated user: {}", id, authenticatedUser != null ? authenticatedUser.getId() : "null");
 
-        if (authenticatedUser == null) {
+        if (authenticatedUser == null)
             return ResponseEntity.status(403).body(null);
-        }
 
         Optional<Job> updatedJob = jobService.updateJob(id, job, userService.getUserById(authenticatedUser.getId()));
         return updatedJob.map(ResponseEntity::ok).orElse(ResponseEntity.status(403).build());
@@ -68,16 +67,14 @@ public class JobController {
     public ResponseEntity<String> deleteJob(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails authenticatedUser) {
         logger.debug("Deleting job with ID: {} for authenticated user: {}", id, authenticatedUser != null ? authenticatedUser.getId() : "null");
 
-        if (authenticatedUser == null) {
+        if (authenticatedUser == null)
             return ResponseEntity.status(403).body("Unauthorized: No authenticated user.");
-        }
+        
 
         boolean deleted = jobService.deleteJob(id, userService.getUserById(authenticatedUser.getId()));
-        if (deleted) {
-            return ResponseEntity.ok("Job deleted successfully.");
-        } else {
-            return ResponseEntity.status(403).body("You are not authorized to delete this job.");
-        }
+        return deleted 
+        	    ? ResponseEntity.ok("Job deleted successfully.") 
+        	    : ResponseEntity.status(403).body("You are not authorized to delete this job.");
     }
 
 }

@@ -32,11 +32,9 @@ public class UserController {
 
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 	private UserService userService;
-	private ProfileService profileService;
 	
 	public UserController(UserService userService, ProfileService profileService) {
 		this.userService = userService;
-		this.profileService = profileService;
 	}
 	
 	@PostMapping(value = "/register", consumes = "application/json", produces = "application/json")
@@ -47,7 +45,6 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<Response<User>> loginUser(@RequestBody User user) {
-        logger.info("call");
     	Response<User> response = userService.loginUser(user);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -64,17 +61,14 @@ public class UserController {
 	        @AuthenticationPrincipal CustomUserDetails authenticatedUser,
 	        HttpServletRequest request) {
 
-	    if (authenticatedUser == null) {
+	    if (authenticatedUser == null) 
 	        return ResponseEntity.status(403).body(new Response<>("Unauthorized: User is not logged in", null));
-	    }
 
-	    if (!authenticatedUser.getId().equals(userId)) {
+	    if (!authenticatedUser.getId().equals(userId))
 	        return ResponseEntity.status(403).body(new Response<>("Unauthorized: Cannot update another user's avatar", null));
-	    }
 
-	    if (file.isEmpty()) {
+	    if (file.isEmpty())
 	        return ResponseEntity.badRequest().body(new Response<>("File is empty", null));
-	    }
 
 	    try {
 	        String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
@@ -93,9 +87,8 @@ public class UserController {
 	        file.transferTo(avatarFile);
 
 	        User user = userService.getUserById(userId);
-	        if (user == null) {
+	        if (user == null)
 	            return ResponseEntity.badRequest().body(new Response<>("User not found", null));
-	        }
 
 	        String avatarUrl = baseUrl + "/uploads/" + fileName;
 	        user.setAvatar(avatarUrl);
@@ -110,19 +103,16 @@ public class UserController {
 
 	@DeleteMapping("/user/{id}")
 	public ResponseEntity<?> deleteUser(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails authenticatedUser) {
-	    if (authenticatedUser == null) {
+	    if (authenticatedUser == null)
 	        return ResponseEntity.status(403).body(new Response<>("Unauthorized: User not logged in", null));
-	    }
 
-	    if (!authenticatedUser.getId().equals(id)) {
+	    if (!authenticatedUser.getId().equals(id))
 	        return ResponseEntity.status(403).body(new Response<>("Unauthorized: Cannot delete another user's account", null));
-	    }
 
 	    try {
 	        boolean userDeleted = userService.deleteUserById(id);
-	        if (!userDeleted) {
+	        if (!userDeleted)
 	            return ResponseEntity.status(403).body(new Response<>("Failed to delete user", null));
-	        }
 
 	        return ResponseEntity.ok(new Response<>("User deleted successfully", true));
 

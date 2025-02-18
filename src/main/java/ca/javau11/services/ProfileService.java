@@ -41,9 +41,8 @@ public class ProfileService {
         validateProfileDTO(profileDTO);
 
         Optional<Profile> existingProfile = profileRepo.findByUserId(userId);
-        if (existingProfile.isPresent()) {
+        if (existingProfile.isPresent())
             throw new ProfileAlreadyExistsException("Profile already exists for this user");
-        }
 
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
@@ -76,12 +75,11 @@ public class ProfileService {
 	}
 	
 	private void validateProfileDTO(ProfileDTO profileDTO) {
-        if (profileDTO.getStatus() == null || profileDTO.getStatus().isEmpty()) {
+        if (profileDTO.getStatus() == null || profileDTO.getStatus().isEmpty())
             throw new ValidationException("Status is required");
-        }
-        if (profileDTO.getSkills() == null || profileDTO.getSkills().isEmpty()) {
+        
+        if (profileDTO.getSkills() == null || profileDTO.getSkills().isEmpty())
             throw new ValidationException("Skills are required and must be comma-separated values");
-        }
     }
 	
 	private Profile mapDtoToProfile(ProfileDTO profileDTO) {
