@@ -58,7 +58,7 @@ public class User {
 	@Column(columnDefinition = "TIMESTAMP", updatable = false)
 	private LocalDateTime date;
 	
-	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "user", fetch = FetchType.LAZY)
+	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "user", fetch = FetchType.LAZY)
 	@JsonIgnore
 	private List<Post> posts;
 	
